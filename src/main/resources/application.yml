@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: ecom-monolith-java
+  datasource:
+    url: ${ECOM_DB_URL:jdbc:mysql://localhost:3307/ecom_monolith_java}
+    username: ${ECOM_DB_USERNAME:ecom}
+    password: ${ECOM_DB_PASSWORD:ecom}
+  jpa:
+    open-in-view: false
+    hibernate:
+      # Flyway is the schema authority; Hibernate must never mutate production tables.
+      ddl-auto: none
+  flyway:
+    enabled: true
+  cache:
+    type: caffeine
+  mail:
+    host: ${ECOM_MAIL_HOST:smtp.gmail.com}
+    port: ${ECOM_MAIL_PORT:587}
+    username: ${ECOM_MAIL_USERNAME:}
+    password: ${ECOM_MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+ecom:
+  jwt:
+    secret: ${JWT_SECRET:change-me-change-me-change-me-32bytes}
+    access-token-ttl: PT15M
+    refresh-token-ttl: P30D
+  cache:
+    product-detail-ttl: PT5M
+    product-detail-max-size: 10000
+  notifications:
+    email-enabled: ${ECOM_EMAIL_ENABLED:false}
+    worker-enabled: ${ECOM_NOTIFICATION_WORKER_ENABLED:true}
+    worker-delay: ${ECOM_NOTIFICATION_WORKER_DELAY:PT10S}
+    claim-timeout: ${ECOM_NOTIFICATION_CLAIM_TIMEOUT:PT5M}
+    batch-size: ${ECOM_NOTIFICATION_BATCH_SIZE:25}
+    max-attempts: ${ECOM_NOTIFICATION_MAX_ATTEMPTS:5}
+    from: ${ECOM_MAIL_FROM:no-reply@ecomlab.local}
+management:
+  endpoints.web.exposure.include: health,info,metrics,caches
