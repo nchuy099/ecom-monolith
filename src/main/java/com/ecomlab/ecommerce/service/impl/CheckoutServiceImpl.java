@@ -106,7 +106,7 @@ public class CheckoutServiceImpl implements CheckoutService {
       List<WarehouseEntity> ranked, Map<UUID, Integer> quantities) {
     // First pass preserves the single nearest warehouse preference for the entire order.
     for (WarehouseEntity warehouse : ranked) {
-      Map<UUID, InventoryEntity> stock = lockedStock(warehouse, quantities.keySet());
+      Map<UUID, InventoryEntity> stock = stockByWarehouse(warehouse, quantities.keySet());
       if (quantities.entrySet().stream()
           .allMatch(
               q ->
@@ -127,7 +127,7 @@ public class CheckoutServiceImpl implements CheckoutService {
       int remaining = request.getValue();
       for (WarehouseEntity warehouse : ranked) {
         InventoryEntity inventory =
-            lockedStock(warehouse, List.of(request.getKey())).get(request.getKey());
+            stockByWarehouse(warehouse, List.of(request.getKey())).get(request.getKey());
         if (inventory == null || inventory.getAvailableQuantity() == 0) continue;
         int take = Math.min(remaining, inventory.getAvailableQuantity());
         inventory.reserve(take);
@@ -146,9 +146,9 @@ public class CheckoutServiceImpl implements CheckoutService {
     return result;
   }
 
-  private Map<UUID, InventoryEntity> lockedStock(
+  private Map<UUID, InventoryEntity> stockByWarehouse(
       WarehouseEntity warehouse, Collection<UUID> variantIds) {
-    return inventoryRepository.lockByWarehouseAndVariants(warehouse.getId(), variantIds).stream()
+    return inventoryRepository.findByWarehouseAndVariants(warehouse.getId(), variantIds).stream()
         .collect(Collectors.toMap(i -> i.getVariant().getId(), i -> i));
   }
 
