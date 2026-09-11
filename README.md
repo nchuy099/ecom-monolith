@@ -19,12 +19,12 @@ Spring Boot e-commerce backend focused on clean layered APIs, JPA query optimiza
 
 ## Key Features
 
-- Full e-commerce monolith: auth, user address, product variant, cart, checkout, order, payment, inventory, warehouse, shipment, tracking, notification, and return APIs.
+- Core e-commerce entities: user, address, category, product, variant, cart, order, payment, inventory, warehouse, shipment, tracking, notification, and return with UUID identifiers and audit fields.
 - JWT security with OAuth2 Resource Server, access/refresh token flow, refresh-token rotation, and role-based access for customer, admin, warehouse staff, and shipper.
-- Spring Data JPA query optimization with JPQL, Specification, EntityManager Criteria, keyset pagination, projection reads, and `join fetch` to reduce N+1 queries.
+- Query optimization with indexing, keyset pagination, projection reads, and `join fetch` to reduce N+1 queries.
 - Caffeine product-detail cache with cache eviction on product, variant, and inventory writes.
-- Multi-warehouse checkout using Haversine nearest-warehouse allocation, split shipment fallback, and JPA `PESSIMISTIC_WRITE` pessimistic lock to prevent overselling.
-- Clean layered code with request/response DTOs, response builders, global/business exceptions, Flyway schema migrations, UUID ids, and five audit fields.
+- Prevented overselling during checkout with JPA `PESSIMISTIC_WRITE` pessimistic locks and transactional inventory reservation.
+- Durable notification jobs with retry backoff, stale-claim recovery, and email delivery.
 
 ## Run Locally
 
