@@ -1,11 +1,13 @@
 package com.ecomlab.ecommerce.repository;
 
 import com.ecomlab.ecommerce.entity.InventoryEntity;
+import jakarta.persistence.LockModeType;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -41,6 +43,7 @@ public interface InventoryRepository extends JpaRepository<InventoryEntity, UUID
   Optional<InventoryEntity> findActiveByWarehouseIdAndVariantId(
       @Param("warehouseId") UUID warehouseId, @Param("variantId") UUID variantId);
 
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query(
       """
       select i
@@ -51,6 +54,6 @@ public interface InventoryRepository extends JpaRepository<InventoryEntity, UUID
         and i.isDeleted = false
       order by i.variant.id
       """)
-  List<InventoryEntity> findByWarehouseAndVariants(
+  List<InventoryEntity> lockByWarehouseAndVariants(
       @Param("warehouseId") UUID warehouseId, @Param("variantIds") Collection<UUID> variantIds);
 }
