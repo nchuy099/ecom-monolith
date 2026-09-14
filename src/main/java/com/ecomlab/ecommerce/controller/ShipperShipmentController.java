@@ -1,7 +1,7 @@
 package com.ecomlab.ecommerce.controller;
 
 import com.ecomlab.ecommerce.dto.request.TrackingRequest;
-import com.ecomlab.ecommerce.dto.response.ShipmentSummaryResponse;
+import com.ecomlab.ecommerce.dto.response.ShipmentResponse;
 import com.ecomlab.ecommerce.service.ShipperShipmentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -20,9 +20,23 @@ public class ShipperShipmentController {
   private final ShipperShipmentService shipperShipmentService;
 
   @GetMapping
-  public ResponseEntity<List<ShipmentSummaryResponse>> getAssignedShipments(Authentication auth) {
+  public ResponseEntity<List<ShipmentResponse>> getAssignedShipments(Authentication auth) {
     return ResponseEntity.ok(
         shipperShipmentService.getAssignedShipments(UUID.fromString(auth.getName())));
+  }
+
+  @GetMapping("/today")
+  public ResponseEntity<List<ShipmentResponse>> getTodayShipments(Authentication auth) {
+    return ResponseEntity.ok(
+        shipperShipmentService.getTodayShipments(UUID.fromString(auth.getName())));
+  }
+
+  @GetMapping("/lookup")
+  public ResponseEntity<ShipmentResponse> lookup(
+      Authentication auth, @RequestParam @NotBlank String trackingNumber) {
+    return ResponseEntity.ok(
+        shipperShipmentService.findByTrackingNumber(
+            UUID.fromString(auth.getName()), trackingNumber));
   }
 
   @PostMapping("/{shipmentId}/tracking")

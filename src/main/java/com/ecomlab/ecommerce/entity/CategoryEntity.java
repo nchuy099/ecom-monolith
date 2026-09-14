@@ -28,4 +28,10 @@ public class CategoryEntity extends BaseEntity {
 
   @Column(length = 1000)
   private String description;
+
+  @Column(length = 120)
+  private String slug;
+
+  @Column(length = 80)
+  private String icon;
 }

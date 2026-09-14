@@ -18,6 +18,11 @@ public class OrderItemResponse {
   private UUID variantId;
   private String sku;
   private String name;
+  private String productName;
+  private String variantName;
   private BigDecimal unitPrice;
+  private BigDecimal price;
   private int quantity;
+  private BigDecimal subtotal;
+  private String imageUrl;
 }

@@ -4,13 +4,19 @@ import com.ecomlab.ecommerce.common.enums.Role;
 import com.ecomlab.ecommerce.common.enums.ShipmentStatus;
 import com.ecomlab.ecommerce.dto.response.ShipmentResponse;
 import com.ecomlab.ecommerce.entity.ShipmentEntity;
+import com.ecomlab.ecommerce.entity.TrackingEventEntity;
 import com.ecomlab.ecommerce.entity.UserEntity;
 import com.ecomlab.ecommerce.exception.BusinessException;
 import com.ecomlab.ecommerce.repository.ShipmentRepository;
+import com.ecomlab.ecommerce.repository.TrackingEventRepository;
 import com.ecomlab.ecommerce.repository.UserRepository;
 import com.ecomlab.ecommerce.service.ShipmentAdminService;
 import com.ecomlab.ecommerce.service.builder.ShipmentResponseBuilder;
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +27,26 @@ import org.springframework.transaction.annotation.Transactional;
 public class ShipmentAdminServiceImpl implements ShipmentAdminService {
   private final ShipmentRepository shipmentRepository;
   private final UserRepository userRepository;
+  private final TrackingEventRepository trackingEventRepository;
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<ShipmentResponse> list() {
+    List<ShipmentEntity> shipments = shipmentRepository.findAllActiveForAdmin();
+    if (shipments.isEmpty()) {
+      return List.of();
+    }
+
+    Map<UUID, List<TrackingEventEntity>> eventsByShipmentId =
+        trackingEventRepository
+            .findByShipmentIds(shipments.stream().map(ShipmentEntity::getId).toList())
+            .stream()
+            .collect(Collectors.groupingBy(event -> event.getShipment().getId()));
+
+    return shipments.stream()
+        .map(shipment -> ShipmentResponseBuilder.build(shipment, eventsByShipmentId))
+        .toList();
+  }
 
   @Override
   @Transactional
@@ -42,6 +68,11 @@ public class ShipmentAdminServiceImpl implements ShipmentAdminService {
     }
 
     shipment.setShipper(shipper);
+    if (shipment.getStatus() == ShipmentStatus.PENDING_PACKING) {
+      shipment.setStatus(ShipmentStatus.READY_FOR_PICKUP);
+      trackingEventRepository.save(trackingEvent(shipment, ShipmentStatus.READY_FOR_PICKUP));
+    }
+
     return ShipmentResponseBuilder.build(shipment);
   }
 
@@ -55,7 +86,19 @@ public class ShipmentAdminServiceImpl implements ShipmentAdminService {
     }
 
     shipment.setStatus(ShipmentStatus.READY_FOR_PICKUP);
+    trackingEventRepository.save(trackingEvent(shipment, ShipmentStatus.READY_FOR_PICKUP));
+
     return ShipmentResponseBuilder.build(shipment);
+  }
+
+  private TrackingEventEntity trackingEvent(ShipmentEntity shipment, ShipmentStatus status) {
+    TrackingEventEntity event = new TrackingEventEntity();
+    event.setShipment(shipment);
+    event.setActor(shipment.getShipper());
+    event.setStatus(status);
+    event.setNote("Shipment is ready for pickup.");
+    event.setOccurredAt(Instant.now());
+    return event;
   }
 
   private ShipmentEntity shipment(UUID shipmentId) {

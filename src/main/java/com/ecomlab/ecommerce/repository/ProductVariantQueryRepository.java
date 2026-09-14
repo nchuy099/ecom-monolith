@@ -12,6 +12,19 @@ public interface ProductVariantQueryRepository {
       UUID categoryId,
       BigDecimal minPrice,
       BigDecimal maxPrice,
+      boolean inStockOnly,
+      String sort,
       ProductListCursor cursor,
       int limit);
+
+  default List<ProductListProjection> findCatalogPageAfterCursor(
+      String keyword,
+      UUID categoryId,
+      BigDecimal minPrice,
+      BigDecimal maxPrice,
+      ProductListCursor cursor,
+      int limit) {
+    return findCatalogPageAfterCursor(
+        keyword, categoryId, minPrice, maxPrice, false, null, cursor, limit);
+  }
 }

@@ -33,6 +33,9 @@ public class ShipmentEntity extends BaseEntity {
   @JoinColumn(name = "shipper_id")
   private UserEntity shipper;
 
+  @Column(name = "tracking_number", nullable = false, unique = true)
+  private String trackingNumber;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   @Builder.Default

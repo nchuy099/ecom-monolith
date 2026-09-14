@@ -1,6 +1,7 @@
 package com.ecomlab.ecommerce.service.impl;
 
 import com.ecomlab.ecommerce.dto.response.CursorPageResponse;
+import com.ecomlab.ecommerce.dto.response.InventoryResponse;
 import com.ecomlab.ecommerce.dto.response.ProductListCursor;
 import com.ecomlab.ecommerce.dto.response.ProductListProjection;
 import com.ecomlab.ecommerce.dto.response.ProductSummaryResponse;
@@ -8,6 +9,7 @@ import com.ecomlab.ecommerce.dto.response.ProductVariantDetailResponse;
 import com.ecomlab.ecommerce.exception.BusinessException;
 import com.ecomlab.ecommerce.repository.ProductVariantRepository;
 import com.ecomlab.ecommerce.service.ProductCatalogService;
+import com.ecomlab.ecommerce.service.builder.InventoryResponseBuilder;
 import com.ecomlab.ecommerce.service.builder.ProductResponseBuilder;
 import java.math.BigDecimal;
 import java.util.List;
@@ -43,6 +45,8 @@ public class ProductCatalogServiceImpl implements ProductCatalogService {
       UUID categoryId,
       BigDecimal minPrice,
       BigDecimal maxPrice,
+      boolean inStockOnly,
+      String sort,
       String cursor,
       int size) {
     validatePriceRange(minPrice, maxPrice);
@@ -53,7 +57,14 @@ public class ProductCatalogServiceImpl implements ProductCatalogService {
         parseCursor(cursor, normalizedKeyword, categoryId, minPrice, maxPrice);
     List<ProductListProjection> rows =
         productVariantRepository.findCatalogPageAfterCursor(
-            normalizedKeyword, categoryId, minPrice, maxPrice, position, pageSize + 1);
+            normalizedKeyword,
+            categoryId,
+            minPrice,
+            maxPrice,
+            inStockOnly,
+            sort,
+            position,
+            pageSize + 1);
 
     boolean hasNext = rows.size() > pageSize;
     List<ProductListProjection> content = hasNext ? rows.subList(0, pageSize) : rows;
@@ -74,6 +85,13 @@ public class ProductCatalogServiceImpl implements ProductCatalogService {
         .hasNext(hasNext)
         .nextCursor(nextCursor)
         .build();
+  }
+
+  @Transactional(readOnly = true)
+  public List<InventoryResponse> inventory(UUID productId) {
+    return productVariantRepository.findInventoryByProductId(productId).stream()
+        .map(InventoryResponseBuilder::build)
+        .toList();
   }
 
   @CacheEvict(cacheNames = "productDetail", key = "#productId")

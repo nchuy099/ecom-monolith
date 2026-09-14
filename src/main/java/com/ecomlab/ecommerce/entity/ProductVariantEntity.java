@@ -33,6 +33,12 @@ public class ProductVariantEntity extends BaseEntity {
   @Column(nullable = false, precision = 19, scale = 2)
   private BigDecimal price;
 
+  @Column(name = "image_url", length = 500)
+  private String imageUrl;
+
+  @Column(name = "attributes_json", columnDefinition = "TEXT")
+  private String attributesJson;
+
   @Column(nullable = false)
   @Builder.Default
   private boolean active = true;

@@ -29,6 +29,17 @@ public class OrderQueryRepositoryImpl implements OrderQueryRepository {
   public List<OrderEntity> findMyOrdersAfterCursor(
       UUID userId, OrderStatus status, OrderListCursor cursor, int limit) {
     List<UUID> orderIds = findOrderIdsAfterCursor(userId, status, cursor, limit);
+    return findOrdersByIds(orderIds);
+  }
+
+  @Override
+  public List<OrderEntity> findOrdersAfterCursor(
+      OrderStatus status, OrderListCursor cursor, int limit) {
+    List<UUID> orderIds = findOrderIdsAfterCursor(null, status, cursor, limit);
+    return findOrdersByIds(orderIds);
+  }
+
+  private List<OrderEntity> findOrdersByIds(List<UUID> orderIds) {
     if (orderIds.isEmpty()) {
       return List.of();
     }
@@ -59,7 +70,10 @@ public class OrderQueryRepositoryImpl implements OrderQueryRepository {
     Root<OrderEntity> orderRoot = query.from(OrderEntity.class);
     Specification<OrderEntity> specification =
         Specification.allOf(
-            OrderSpecifications.visibleToUser(userId), OrderSpecifications.hasStatus(status));
+            userId == null
+                ? OrderSpecifications.visible()
+                : OrderSpecifications.visibleToUser(userId),
+            OrderSpecifications.hasStatus(status));
     Predicate filterPredicate = specification.toPredicate(orderRoot, query, criteriaBuilder);
     Predicate cursorPredicate = afterCursor(orderRoot, criteriaBuilder, cursor);
 

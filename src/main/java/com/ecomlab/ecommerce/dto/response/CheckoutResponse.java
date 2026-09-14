@@ -15,4 +15,5 @@ public class CheckoutResponse {
   private String orderNumber;
   private BigDecimal totalAmount;
   private List<ShipmentPlanResponse> shipments;
+  private List<CheckoutItemAvailabilityResponse> items;
 }

@@ -49,4 +49,11 @@ public class InventoryEntity extends BaseEntity {
     reservedQuantity -= q;
     availableQuantity += q;
   }
+
+  public void consumeReserved(int q) {
+    if (q <= 0 || reservedQuantity < q) {
+      throw new IllegalArgumentException("Invalid reserved inventory consumption");
+    }
+    reservedQuantity -= q;
+  }
 }

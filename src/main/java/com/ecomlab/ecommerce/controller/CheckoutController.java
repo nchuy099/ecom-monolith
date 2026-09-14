@@ -27,4 +27,12 @@ public class CheckoutController {
             checkoutService.checkout(
                 UUID.fromString(authentication.getName()), request.getAddressId()));
   }
+
+  @PostMapping("/preview")
+  @PreAuthorize("hasRole('CUSTOMER')")
+  public ResponseEntity<CheckoutResponse> preview(
+      Authentication authentication, @Valid @RequestBody CheckoutRequest request) {
+    return ResponseEntity.ok(
+        checkoutService.preview(UUID.fromString(authentication.getName()), request.getAddressId()));
+  }
 }

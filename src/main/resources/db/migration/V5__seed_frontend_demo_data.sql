@@ -1,0 +1,111 @@
+
+INSERT INTO users (id, email, password_hash, display_name, role, created_at, updated_at, is_deleted)
+VALUES
+  ('c1010101-0000-0000-0000-000000000001', 'customer@ecomlab.com', '$2b$12$U.1nwu5qJ4Hdr8il1fszZe9SF.3z2VFXrB68BTgfydl1vOtxaSSOG', 'Nguyễn Văn An (Khách Hàng)', 'CUSTOMER', TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('a2020202-0000-0000-0000-000000000002', 'admin@ecomlab.com', '$2b$12$U.1nwu5qJ4Hdr8il1fszZe9SF.3z2VFXrB68BTgfydl1vOtxaSSOG', 'Lê Hoàng Admin (Quản Trị Viên)', 'ADMIN', TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('53030303-0000-0000-0000-000000000003', 'shipper@ecomlab.com', '$2b$12$U.1nwu5qJ4Hdr8il1fszZe9SF.3z2VFXrB68BTgfydl1vOtxaSSOG', 'Trần Văn Tốc Độ (Shipper)', 'SHIPPER', TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('54040404-0000-0000-0000-000000000004', 'warehouse@ecomlab.com', '$2b$12$U.1nwu5qJ4Hdr8il1fszZe9SF.3z2VFXrB68BTgfydl1vOtxaSSOG', 'Phạm Minh Kho (Thủ Kho)', 'WAREHOUSE_STAFF', TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false);
+
+INSERT INTO categories (id, parent_id, name, description, slug, icon, created_at, updated_at, is_deleted)
+VALUES
+  ('10000000-0000-0000-0000-000000000001', null, 'Laptop & Máy Tính', 'Máy tính xách tay cao cấp, mỏng nhẹ và gaming hiệu năng đỉnh cao', 'laptop', 'Laptop', TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('10000000-0000-0000-0000-000000000002', null, 'Điện Thoại & Tablet', 'Flagship smartphone, máy tính bảng hàng đầu thị trường', 'smartphones', 'Smartphone', TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('10000000-0000-0000-0000-000000000003', null, 'Âm Thanh & Tai Nghe', 'Tai nghe chống ồn chủ động, loa bluetooth không dây trung thực', 'audio', 'Headphones', TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('10000000-0000-0000-0000-000000000004', null, 'Phụ Kiện & Gaming Gear', 'Bàn phím cơ, chuột công thái học, sạc nhanh GaN cao cấp', 'accessories', 'Keyboard', TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('10000000-0000-0000-0000-000000000005', null, 'Smart Home & Gia Dụng', 'Robot hút bụi, đèn thông minh, máy lọc không khí hiện đại', 'smart-home', 'Home', TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false);
+
+INSERT INTO warehouses (id, code, name, address_line, latitude, longitude, active, created_at, updated_at, is_deleted)
+VALUES
+  ('20000000-0000-0000-0000-000000000001', 'WH-HN-01', 'Tổng Kho Hà Nội (Long Biên)', 'Số 15 KCN Đài Tư, Quận Long Biên, TP. Hà Nội', 21.037200, 105.892400, true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('20000000-0000-0000-0000-000000000002', 'WH-HCM-01', 'Tổng Kho TP. Hồ Chí Minh (Tân Bình)', 'Số 45 Đường Trường Sơn, Phường 2, Quận Tân Bình, TP. HCM', 10.801500, 106.657800, true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('20000000-0000-0000-0000-000000000003', 'WH-DN-01', 'Kho Vận Trung Chuyển Đà Nẵng (Hải Châu)', 'Số 128 Đường 2 Tháng 9, Quận Hải Châu, TP. Đà Nẵng', 16.054400, 108.202200, true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false);
+
+INSERT INTO products (id, category_id, name, description, rating, review_count, badge, active, created_at, updated_at, is_deleted)
+VALUES
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'MacBook Pro 14" M3 Pro (18GB / 512GB SSD)', 'Chip Apple M3 Pro với CPU 11 lõi và GPU 14 lõi, màn hình Liquid Retina XDR 120Hz siêu sáng, thời lượng pin lên đến 18 giờ liên tục.', 4.90, 128, 'Bán chạy nhất', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000002', 'iPhone 16 Pro Max 256GB Titan Tự Nhiên', 'Khung viền titan siêu nhẹ cấp hàng không vũ trụ, chip A18 Pro với trí tuệ nhân tạo Apple Intelligence, nút Camera Control thế hệ mới.', 4.95, 310, 'Mới ra mắt', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('30000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000003', 'Tai Nghe Sony WH-1000XM5 Chống Ồn Flagship', 'Tai nghe chống ồn chủ động flagship với âm thanh Hi-Res, pin lâu và thiết kế đeo thoải mái.', 4.80, 94, 'Top Âm Thanh', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('30000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000004', 'Apple Watch Ultra 2 GPS + Cellular 49mm Titanium', 'Đồng hồ thể thao cao cấp vỏ titanium, kết nối Cellular và thời lượng pin dài.', 4.85, 76, 'Đẳng cấp Thể thao', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('30000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000004', 'Bàn Phím Cơ Custom Không Dây Keychron Q1 Pro', 'Bàn phím cơ custom khung nhôm CNC, kết nối không dây, switch red và RGB.', 4.75, 52, 'Khuyên dùng', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('30000000-0000-0000-0000-000000000006', '10000000-0000-0000-0000-000000000001', 'Dell XPS 16 9640 Core Ultra 7 OLED 4K Touch', 'Laptop màn hình OLED 4K cảm ứng cho sáng tạo nội dung và đồ họa chuyên nghiệp.', 4.70, 40, 'Đồ họa Chuyên nghiệp', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('30000000-0000-0000-0000-000000000007', '10000000-0000-0000-0000-000000000003', 'Loa Không Dây Marshall Stanmore III Vintage', 'Loa bluetooth phong cách vintage với âm thanh mạnh mẽ và thiết kế biểu tượng.', 4.90, 115, 'Hot trend', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('30000000-0000-0000-0000-000000000008', '10000000-0000-0000-0000-000000000005', 'Robot Hút Bụi Lau Nhà Ecovacs Deebot T30 Pro Omni', 'Robot hút bụi lau nhà có trạm giặt nước nóng tự động và lực hút 11000Pa.', 4.88, 88, 'Công nghệ 2026', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false);
+
+INSERT INTO product_variants (id, product_id, sku, name, price, image_url, attributes_json, active, created_at, updated_at, is_deleted)
+VALUES
+  ('40000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'MBP-14-M3P-BLK', 'Đen Không Gian (Space Black) / 512GB', 49990000.00, 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80', '{"Màu sắc":"Space Black","RAM":"18GB Unified Memory","Ổ cứng":"512GB NVMe SSD"}', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('40000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000001', 'MBP-14-M3P-SLV1T', 'Bạc Ánh Kim (Silver) / 1TB SSD', 59990000.00, 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=80', '{"Màu sắc":"Silver","RAM":"36GB Unified Memory","Ổ cứng":"1TB NVMe SSD"}', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('40000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000002', 'IP16PM-256-DESERT', 'Titan Sa Mạc / 256GB', 34490000.00, 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80', '{"Màu sắc":"Titan Sa Mạc","Dung lượng":"256GB","Màn hình":"6.9 inch Super Retina XDR"}', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('40000000-0000-0000-0000-000000000004', '30000000-0000-0000-0000-000000000002', 'IP16PM-512-BLK', 'Titan Đen / 512GB', 39990000.00, 'https://images.unsplash.com/photo-1591337676887-a217a6970a8a?auto=format&fit=crop&w=800&q=80', '{"Màu sắc":"Titan Đen","Dung lượng":"512GB","Màn hình":"6.9 inch Super Retina XDR"}', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('40000000-0000-0000-0000-000000000005', '30000000-0000-0000-0000-000000000003', 'SONY-XM5-SLV', 'Bạc Ánh Kim / Hi-Res Audio', 7990000.00, 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80', '{"Màu sắc":"Bạc","Kết nối":"Bluetooth 5.2","Chống ồn":"Active Noise Cancelling"}', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('40000000-0000-0000-0000-000000000006', '30000000-0000-0000-0000-000000000004', 'AWU2-49-OCEAN', 'Vỏ Titan / Dây Ocean Xanh Đậm', 21490000.00, 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80', '{"Kích thước":"49mm","Kết nối":"GPS + Cellular","Chất liệu":"Titanium"}', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('40000000-0000-0000-0000-000000000007', '30000000-0000-0000-0000-000000000005', 'KEY-Q1P-RED', 'Khung Nhôm CNC / Red Switch / RGB', 4690000.00, 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80', '{"Switch":"Red","Layout":"75%","Kết nối":"Wireless"}', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('40000000-0000-0000-0000-000000000008', '30000000-0000-0000-0000-000000000006', 'DELL-XPS16-OLED', 'Bạc Graphite / 32GB / 1TB SSD', 58900000.00, 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=800&q=80', '{"RAM":"32GB","Ổ cứng":"1TB SSD","Màn hình":"OLED 4K Touch"}', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('40000000-0000-0000-0000-000000000009', '30000000-0000-0000-0000-000000000007', 'MARSHALL-ST3-BLK', 'Màu Đen Cổ Điển / Bluetooth 5.2', 9490000.00, 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=800&q=80', '{"Màu sắc":"Đen","Kết nối":"Bluetooth 5.2","Phong cách":"Vintage"}', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('40000000-0000-0000-0000-000000000010', '30000000-0000-0000-0000-000000000008', 'ECO-T30-OMNI', 'Trạm Giặt Nước Nóng Tự Động / 11000Pa', 16990000.00, 'https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?auto=format&fit=crop&w=800&q=80', '{"Lực hút":"11000Pa","Trạm sạc":"Omni","Tính năng":"Lau nhà nước nóng"}', true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false);
+
+INSERT INTO inventories (id, warehouse_id, product_variant_id, available_quantity, reserved_quantity, version, created_at, updated_at, is_deleted)
+VALUES
+  ('50000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 25, 3, 0, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('50000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000001', 13, 1, 0, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('50000000-0000-0000-0000-000000000003', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000003', 35, 8, 0, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('50000000-0000-0000-0000-000000000004', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000003', 30, 4, 0, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('50000000-0000-0000-0000-000000000005', '20000000-0000-0000-0000-000000000003', '40000000-0000-0000-0000-000000000005', 20, 1, 0, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('50000000-0000-0000-0000-000000000006', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000006', 19, 3, 0, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('50000000-0000-0000-0000-000000000007', '20000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000007', 24, 1, 0, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('50000000-0000-0000-0000-000000000008', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000008', 14, 0, 0, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('50000000-0000-0000-0000-000000000009', '20000000-0000-0000-0000-000000000003', '40000000-0000-0000-0000-000000000009', 28, 2, 0, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('50000000-0000-0000-0000-000000000010', '20000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000010', 16, 2, 0, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false);
+
+INSERT INTO user_addresses (id, user_id, recipient_name, phone, address_line, city, latitude, longitude, is_default, created_at, updated_at, is_deleted)
+VALUES
+  ('60000000-0000-0000-0000-000000000001', 'c1010101-0000-0000-0000-000000000001', 'Nguyễn Văn An', '0988 123 456', 'Toà nhà Keangnam Landmark 72, Đường Phạm Hùng', 'Hà Nội', 21.017300, 105.783800, true, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false),
+  ('60000000-0000-0000-0000-000000000002', 'c1010101-0000-0000-0000-000000000001', 'Nguyễn Văn An', '0988 123 456', 'Tầng 18 Vincom Center, 72 Lê Thánh Tôn, Bến Nghé, Quận 1', 'TP. Hồ Chí Minh', 10.777800, 106.702000, false, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false);
+
+INSERT INTO carts (id, user_id, created_at, updated_at, is_deleted)
+VALUES ('70000000-0000-0000-0000-000000000001', 'c1010101-0000-0000-0000-000000000001', TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false);
+
+INSERT INTO cart_items (id, cart_id, product_variant_id, quantity, created_at, updated_at, is_deleted)
+VALUES ('71000000-0000-0000-0000-000000000001', '70000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000003', 1, TIMESTAMP '2026-09-18 00:00:00.000000', TIMESTAMP '2026-09-18 00:00:00.000000', false);
+
+INSERT INTO orders (id, order_number, user_id, status, recipient_name, phone, address_line, city, latitude, longitude, total_amount, created_at, updated_at, is_deleted)
+VALUES
+  ('80000000-0000-0000-0000-000000000001', 'ORD-2026-9810', 'c1010101-0000-0000-0000-000000000001', 'CONFIRMED', 'Nguyễn Văn An', '0988 123 456', 'Toà nhà Keangnam Landmark 72, Đường Phạm Hùng, Hà Nội', 'Hà Nội', 21.017300, 105.783800, 42480000.00, TIMESTAMP '2026-09-17 14:30:00.000000', TIMESTAMP '2026-09-18 00:15:00.000000', false),
+  ('80000000-0000-0000-0000-000000000002', 'ORD-2026-9809', 'c1010101-0000-0000-0000-000000000001', 'COMPLETED', 'Nguyễn Văn An', '0988 123 456', 'Toà nhà Keangnam Landmark 72, Đường Phạm Hùng, Hà Nội', 'Hà Nội', 21.017300, 105.783800, 49990000.00, TIMESTAMP '2026-09-14 09:15:00.000000', TIMESTAMP '2026-09-14 18:00:00.000000', false);
+
+INSERT INTO order_items (id, order_id, product_variant_id, sku_snapshot, name_snapshot, unit_price, quantity, created_at, updated_at, is_deleted)
+VALUES
+  ('81000000-0000-0000-0000-000000000001', '80000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000003', 'IP16PM-256-DESERT', 'Titan Sa Mạc / 256GB', 34490000.00, 1, TIMESTAMP '2026-09-17 14:30:00.000000', TIMESTAMP '2026-09-17 14:30:00.000000', false),
+  ('81000000-0000-0000-0000-000000000002', '80000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000005', 'SONY-XM5-SLV', 'Bạc Ánh Kim / Hi-Res Audio', 7990000.00, 1, TIMESTAMP '2026-09-17 14:30:00.000000', TIMESTAMP '2026-09-17 14:30:00.000000', false),
+  ('81000000-0000-0000-0000-000000000003', '80000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000001', 'MBP-14-M3P-BLK', 'Space Black / 18GB / 512GB', 49990000.00, 1, TIMESTAMP '2026-09-14 09:15:00.000000', TIMESTAMP '2026-09-14 09:15:00.000000', false);
+
+INSERT INTO shipments (id, order_id, warehouse_id, shipper_id, tracking_number, status, created_at, updated_at, is_deleted)
+VALUES
+  ('90000000-0000-0000-0000-000000000001', '80000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', '53030303-0000-0000-0000-000000000003', 'VNPOST-HN-883921', 'OUT_FOR_DELIVERY', TIMESTAMP '2026-09-17 15:00:00.000000', TIMESTAMP '2026-09-18 00:15:00.000000', false),
+  ('90000000-0000-0000-0000-000000000002', '80000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', '53030303-0000-0000-0000-000000000003', 'VNPOST-HN-882020', 'DELIVERED', TIMESTAMP '2026-09-14 10:00:00.000000', TIMESTAMP '2026-09-14 18:00:00.000000', false);
+
+INSERT INTO shipment_items (id, shipment_id, order_item_id, inventory_id, quantity, created_at, updated_at, is_deleted)
+VALUES
+  ('91000000-0000-0000-0000-000000000001', '90000000-0000-0000-0000-000000000001', '81000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000003', 1, TIMESTAMP '2026-09-17 15:00:00.000000', TIMESTAMP '2026-09-17 15:00:00.000000', false),
+  ('91000000-0000-0000-0000-000000000002', '90000000-0000-0000-0000-000000000001', '81000000-0000-0000-0000-000000000002', '50000000-0000-0000-0000-000000000005', 1, TIMESTAMP '2026-09-17 15:00:00.000000', TIMESTAMP '2026-09-17 15:00:00.000000', false),
+  ('91000000-0000-0000-0000-000000000003', '90000000-0000-0000-0000-000000000002', '81000000-0000-0000-0000-000000000003', '50000000-0000-0000-0000-000000000001', 1, TIMESTAMP '2026-09-14 10:00:00.000000', TIMESTAMP '2026-09-14 10:00:00.000000', false);
+
+INSERT INTO tracking_events (id, shipment_id, actor_id, status, note, latitude, longitude, proof_url, occurred_at, created_at, updated_at, is_deleted)
+VALUES
+  ('a0000000-0000-0000-0000-000000000001', '90000000-0000-0000-0000-000000000001', null, 'PENDING_PACKING', 'Đơn hàng được tiếp nhận và đóng gói theo chuẩn niêm phong an toàn.', 21.037200, 105.892400, null, TIMESTAMP '2026-09-17 15:00:00.000000', TIMESTAMP '2026-09-17 15:00:00.000000', TIMESTAMP '2026-09-17 15:00:00.000000', false),
+  ('a0000000-0000-0000-0000-000000000002', '90000000-0000-0000-0000-000000000001', null, 'READY_FOR_PICKUP', 'Kiện hàng sẵn sàng bàn giao cho đội ngũ vận chuyển.', 21.037200, 105.892400, null, TIMESTAMP '2026-09-17 17:30:00.000000', TIMESTAMP '2026-09-17 17:30:00.000000', TIMESTAMP '2026-09-17 17:30:00.000000', false),
+  ('a0000000-0000-0000-0000-000000000003', '90000000-0000-0000-0000-000000000001', '53030303-0000-0000-0000-000000000003', 'PICKED_UP', 'Shipper Trần Văn Tốc Độ đã nhận kiện hàng.', 21.030000, 105.790000, null, TIMESTAMP '2026-09-17 19:00:00.000000', TIMESTAMP '2026-09-17 19:00:00.000000', TIMESTAMP '2026-09-17 19:00:00.000000', false),
+  ('a0000000-0000-0000-0000-000000000004', '90000000-0000-0000-0000-000000000001', '53030303-0000-0000-0000-000000000003', 'IN_TRANSIT', 'Đang điều phối phân luồng tuyến giao Nam Từ Liêm.', 21.030000, 105.790000, null, TIMESTAMP '2026-09-17 22:30:00.000000', TIMESTAMP '2026-09-17 22:30:00.000000', TIMESTAMP '2026-09-17 22:30:00.000000', false),
+  ('a0000000-0000-0000-0000-000000000005', '90000000-0000-0000-0000-000000000001', '53030303-0000-0000-0000-000000000003', 'OUT_FOR_DELIVERY', 'Shipper đang trên đường giao đến bạn. Dự kiến giao trong 30-45 phút.', 21.017300, 105.783800, null, TIMESTAMP '2026-09-18 00:15:00.000000', TIMESTAMP '2026-09-18 00:15:00.000000', TIMESTAMP '2026-09-18 00:15:00.000000', false),
+  ('a0000000-0000-0000-0000-000000000006', '90000000-0000-0000-0000-000000000002', '53030303-0000-0000-0000-000000000003', 'DELIVERED', 'Đơn hàng đã giao thành công.', 21.017300, 105.783800, null, TIMESTAMP '2026-09-14 18:00:00.000000', TIMESTAMP '2026-09-14 18:00:00.000000', TIMESTAMP '2026-09-14 18:00:00.000000', false);
+
+INSERT INTO payments (id, order_id, provider, provider_reference, idempotency_key, amount, status, paid_at, created_at, updated_at, is_deleted)
+VALUES
+  ('b0000000-0000-0000-0000-000000000001', '80000000-0000-0000-0000-000000000001', 'COD', 'COD-ORD-2026-9810', 'seed-payment-9810', 42480000.00, 'PENDING', null, TIMESTAMP '2026-09-17 14:30:00.000000', TIMESTAMP '2026-09-17 14:30:00.000000', false),
+  ('b0000000-0000-0000-0000-000000000002', '80000000-0000-0000-0000-000000000002', 'COD', 'COD-ORD-2026-9809', 'seed-payment-9809', 49990000.00, 'SUCCEEDED', TIMESTAMP '2026-09-14 18:00:00.000000', TIMESTAMP '2026-09-14 09:15:00.000000', TIMESTAMP '2026-09-14 18:00:00.000000', false);
+
+INSERT INTO notifications (id, user_id, order_id, recipient_email, subject, body, status, attempt_count, next_attempt_at, claimed_at, read_at, last_error, created_at, updated_at, is_deleted)
+VALUES
+  ('c0000000-0000-0000-0000-000000000001', 'c1010101-0000-0000-0000-000000000001', '80000000-0000-0000-0000-000000000001', 'customer@ecomlab.com', 'Đơn hàng đang trên đường giao!', 'Kiện hàng mã VNPOST-HN-883921 đang được giao đến Landmark 72. Vui lòng để ý điện thoại.', 'SENT', 0, TIMESTAMP '2026-09-18 00:15:00.000000', null, null, null, TIMESTAMP '2026-09-18 00:15:00.000000', TIMESTAMP '2026-09-18 00:15:00.000000', false),
+  ('c0000000-0000-0000-0000-000000000002', 'c1010101-0000-0000-0000-000000000001', '80000000-0000-0000-0000-000000000001', 'customer@ecomlab.com', 'Đặt hàng thành công #ORD-2026-9810', 'Cảm ơn bạn đã mua hàng! Hệ thống đã điều phối giữ hàng an toàn tại Tổng Kho Long Biên.', 'SENT', 0, TIMESTAMP '2026-09-17 14:30:00.000000', null, TIMESTAMP '2026-09-17 14:35:00.000000', null, TIMESTAMP '2026-09-17 14:30:00.000000', TIMESTAMP '2026-09-17 14:35:00.000000', false),
+  ('c0000000-0000-0000-0000-000000000003', 'c1010101-0000-0000-0000-000000000001', null, 'customer@ecomlab.com', 'Ưu đãi Flash Sale mùa Thu 2026', 'Giảm đến 15% cho dòng sản phẩm Laptop và Gaming Gear hôm nay.', 'SENT', 0, TIMESTAMP '2026-09-16 08:00:00.000000', null, TIMESTAMP '2026-09-16 08:15:00.000000', null, TIMESTAMP '2026-09-16 08:00:00.000000', TIMESTAMP '2026-09-16 08:15:00.000000', false);

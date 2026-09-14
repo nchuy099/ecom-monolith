@@ -37,6 +37,8 @@ class ProductCatalogServiceImplTest {
             eq(categoryId),
             eq(new BigDecimal("100.00")),
             eq(new BigDecimal("500.00")),
+            eq(false),
+            eq(null),
             eq(null),
             eq(2)))
         .thenReturn(List.of(first, second));
@@ -65,7 +67,14 @@ class ProductCatalogServiceImplTest {
 
     verify(productVariantRepository, never())
         .findCatalogPageAfterCursor(
-            eq("laptop"), eq(categoryId), eq(null), eq(null), eq(cursor), eq(11));
+            eq("laptop"),
+            eq(categoryId),
+            eq(null),
+            eq(null),
+            eq(false),
+            eq(null),
+            eq(cursor),
+            eq(11));
   }
 
   private ProductListProjection product(String price) {

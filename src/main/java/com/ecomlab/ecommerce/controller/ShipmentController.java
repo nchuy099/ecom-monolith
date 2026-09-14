@@ -18,4 +18,11 @@ public class ShipmentController {
   public ResponseEntity<List<ShipmentResponse>> getMyShipments(Authentication a) {
     return ResponseEntity.ok(customerShipmentService.getMyShipments(UUID.fromString(a.getName())));
   }
+
+  @GetMapping("/orders/{orderId}")
+  public ResponseEntity<List<ShipmentResponse>> getMyOrderShipments(
+      Authentication a, @PathVariable UUID orderId) {
+    return ResponseEntity.ok(
+        customerShipmentService.getMyOrderShipments(UUID.fromString(a.getName()), orderId));
+  }
 }

@@ -3,9 +3,12 @@ package com.ecomlab.ecommerce.controller;
 import com.ecomlab.ecommerce.common.enums.OrderStatus;
 import com.ecomlab.ecommerce.dto.response.CursorPageResponse;
 import com.ecomlab.ecommerce.dto.response.OrderResponse;
+import com.ecomlab.ecommerce.dto.response.ShipmentResponse;
+import com.ecomlab.ecommerce.service.CustomerShipmentService;
 import com.ecomlab.ecommerce.service.OrderService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrderController {
   private final OrderService orderService;
+  private final CustomerShipmentService customerShipmentService;
 
   @GetMapping
   public ResponseEntity<CursorPageResponse<OrderResponse>> getMyOrders(
@@ -36,6 +40,13 @@ public class OrderController {
   @GetMapping("/{id}")
   public ResponseEntity<OrderResponse> getDetails(Authentication a, @PathVariable UUID id) {
     return ResponseEntity.ok(orderService.getDetails(UUID.fromString(a.getName()), id));
+  }
+
+  @GetMapping("/{id}/shipments")
+  public ResponseEntity<List<ShipmentResponse>> getShipments(
+      Authentication a, @PathVariable UUID id) {
+    return ResponseEntity.ok(
+        customerShipmentService.getMyOrderShipments(UUID.fromString(a.getName()), id));
   }
 
   @PostMapping("/{id}/cancel")

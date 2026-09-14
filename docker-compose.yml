@@ -1,9 +1,14 @@
 services:
-  mysql:
-    image: mysql:8.4
+  postgres:
+    image: postgres:16-alpine
     environment:
-      MYSQL_DATABASE: ecom_monolith_java
-      MYSQL_USER: ecom
-      MYSQL_PASSWORD: ecom
-      MYSQL_ROOT_PASSWORD: root
-    ports: ["3307:3306"]
+      POSTGRES_DB: ecom_monolith_java
+      POSTGRES_USER: ecom
+      POSTGRES_PASSWORD: ecom
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

@@ -5,7 +5,7 @@ Spring Boot e-commerce backend focused on clean layered APIs, JPA query optimiza
 ## Stack
 
 - Java 21, Spring Boot 3.5, Spring Web MVC, Spring Data JPA
-- MySQL 8 with Flyway migrations
+- PostgreSQL/Supabase with Flyway migrations
 - Spring Security OAuth2 Resource Server with HS256 JWTs
 - Caffeine cache for product detail reads
 - Springdoc OpenAPI UI at `http://localhost:8080/swagger-ui.html`
@@ -29,17 +29,25 @@ Spring Boot e-commerce backend focused on clean layered APIs, JPA query optimiza
 ## Run Locally
 
 ```bash
-docker compose up -d mysql
+docker compose up -d postgres
 ./gradlew bootRun
 ```
 
 Default local configuration:
 
 ```text
-ECOM_DB_URL=jdbc:mysql://localhost:3307/ecom_monolith_java
+ECOM_DB_URL=jdbc:postgresql://localhost:5433/ecom_monolith_java
 ECOM_DB_USERNAME=ecom
 ECOM_DB_PASSWORD=ecom
 JWT_SECRET=change-me-change-me-change-me-32bytes
+```
+
+Supabase/Render example:
+
+```text
+ECOM_DB_URL=jdbc:postgresql://<supabase-pooler-host>:6543/postgres?sslmode=require&prepareThreshold=0
+ECOM_DB_USERNAME=<postgres-user>
+ECOM_DB_PASSWORD=<postgres-password>
 ```
 
 Enable real email delivery only with runtime variables:

@@ -11,6 +11,8 @@ public interface NotificationService {
 
   NotificationResponse read(UUID userId, UUID notificationId);
 
+  void readAll(UUID userId);
+
   PageResponse<NotificationResponse> adminPage(String status, int page, int size);
 
   void queueOrderCreated(OrderEntity order);

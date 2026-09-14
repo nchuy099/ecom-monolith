@@ -11,4 +11,7 @@ public record ProductDetailProjection(
     String variantName,
     BigDecimal price,
     long availableQuantity,
-    long reservedQuantity) {}
+    long reservedQuantity,
+    String imageUrl,
+    String description,
+    String attributesJson) {}

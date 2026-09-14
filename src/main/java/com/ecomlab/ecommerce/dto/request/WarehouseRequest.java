@@ -13,6 +13,7 @@ public class WarehouseRequest {
   @NotBlank private String code;
   @NotBlank private String name;
   @NotBlank private String addressLine;
+  @NotBlank private String priorityArea;
   @NotNull private BigDecimal latitude;
   @NotNull private BigDecimal longitude;
 
@@ -26,6 +27,10 @@ public class WarehouseRequest {
 
   public String addressLine() {
     return addressLine;
+  }
+
+  public String priorityArea() {
+    return priorityArea;
   }
 
   public BigDecimal latitude() {

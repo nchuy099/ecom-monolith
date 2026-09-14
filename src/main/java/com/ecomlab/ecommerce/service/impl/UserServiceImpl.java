@@ -1,5 +1,6 @@
 package com.ecomlab.ecommerce.service.impl;
 
+import com.ecomlab.ecommerce.common.enums.Role;
 import com.ecomlab.ecommerce.dto.request.AddressRequest;
 import com.ecomlab.ecommerce.dto.response.AddressResponse;
 import com.ecomlab.ecommerce.dto.response.UserResponse;
@@ -84,6 +85,14 @@ public class UserServiceImpl implements UserService {
   public void setDefaultAddress(UUID userId, UUID addressId) {
     clearDefaultExcept(userId, addressId);
     ownedAddress(userId, addressId).setDefaultAddress(true);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<UserResponse> shippers() {
+    return userRepository.findActiveByRole(Role.SHIPPER).stream()
+        .map(UserResponseBuilder::build)
+        .toList();
   }
 
   private UserEntity user(UUID id) {

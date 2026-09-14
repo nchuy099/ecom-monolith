@@ -1,5 +1,6 @@
 package com.ecomlab.ecommerce.specification;
 
+import com.ecomlab.ecommerce.entity.InventoryEntity;
 import com.ecomlab.ecommerce.entity.ProductVariantEntity;
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -52,5 +53,24 @@ public final class ProductVariantSpecifications {
         maxPrice == null
             ? criteriaBuilder.conjunction()
             : criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice);
+  }
+
+  public static Specification<ProductVariantEntity> inStockOnly(boolean inStockOnly) {
+    return (root, query, criteriaBuilder) -> {
+      if (!inStockOnly) {
+        return criteriaBuilder.conjunction();
+      }
+
+      var subquery = query.subquery(Long.class);
+      var inventoryRoot = subquery.from(InventoryEntity.class);
+      subquery.select(criteriaBuilder.literal(1L));
+      subquery.where(
+          criteriaBuilder.and(
+              criteriaBuilder.equal(inventoryRoot.get("variant"), root),
+              criteriaBuilder.isFalse(inventoryRoot.get("isDeleted")),
+              criteriaBuilder.greaterThan(inventoryRoot.get("availableQuantity"), 0)));
+
+      return criteriaBuilder.exists(subquery);
+    };
   }
 }

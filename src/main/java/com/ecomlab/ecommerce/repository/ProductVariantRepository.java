@@ -40,7 +40,10 @@ public interface ProductVariantRepository
         v.name,
         v.price,
         coalesce(sum(i.availableQuantity), 0),
-        coalesce(sum(i.reservedQuantity), 0)
+        coalesce(sum(i.reservedQuantity), 0),
+        v.imageUrl,
+        p.description,
+        v.attributesJson
       )
       from ProductVariantEntity v
       join v.product p
@@ -50,8 +53,26 @@ public interface ProductVariantRepository
         and p.isDeleted = false
         and v.active = true
         and v.isDeleted = false
-      group by p.id, p.name, v.id, v.sku, v.name, v.price
+      group by p.id, p.name, v.id, v.sku, v.name, v.price, v.imageUrl, p.description, v.attributesJson
       order by v.price asc, v.id asc
       """)
   List<ProductDetailProjection> findVisibleDetailByProductId(@Param("productId") UUID productId);
+
+  @Query(
+      """
+      select distinct i
+      from InventoryEntity i
+      join fetch i.warehouse
+      join fetch i.variant v
+      join fetch v.product p
+      where p.id = :productId
+        and p.active = true
+        and p.isDeleted = false
+        and v.active = true
+        and v.isDeleted = false
+        and i.isDeleted = false
+      order by i.warehouse.name asc
+      """)
+  List<com.ecomlab.ecommerce.entity.InventoryEntity> findInventoryByProductId(
+      @Param("productId") UUID productId);
 }

@@ -1,6 +1,7 @@
 package com.ecomlab.ecommerce.repository;
 
 import com.ecomlab.ecommerce.entity.OrderEntity;
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,14 @@ public interface OrderRepository extends JpaRepository<OrderEntity, UUID>, Order
       """)
   Optional<OrderEntity> findOwnedByIdWithItems(
       @Param("orderId") UUID orderId, @Param("userId") UUID userId);
+
+  long countByIsDeletedFalse();
+
+  @Query(
+      """
+      select coalesce(sum(o.totalAmount), 0)
+      from OrderEntity o
+      where o.isDeleted = false
+      """)
+  BigDecimal totalRevenue();
 }

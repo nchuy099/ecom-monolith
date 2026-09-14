@@ -1,6 +1,7 @@
 package com.ecomlab.ecommerce.dto.response;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +23,7 @@ public class ProductVariantDetailResponse {
   private BigDecimal price;
   private long availableQuantity;
   private long reservedQuantity;
+  private String imageUrl;
+  private String description;
+  private Map<String, String> attributes;
 }

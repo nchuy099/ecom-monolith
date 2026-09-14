@@ -30,4 +30,10 @@ public class NotificationController {
     return ResponseEntity.ok(
         notificationService.read(UUID.fromString(authentication.getName()), id));
   }
+
+  @PostMapping("/read-all")
+  public ResponseEntity<Void> readAll(Authentication authentication) {
+    notificationService.readAll(UUID.fromString(authentication.getName()));
+    return ResponseEntity.noContent().build();
+  }
 }

@@ -11,6 +11,10 @@ import lombok.*;
 public class ShipmentSummaryResponse {
   private UUID id;
   private String status;
+  private String trackingNumber;
   private String warehouseName;
   private String warehouseAddress;
+  private String recipientName;
+  private String recipientPhone;
+  private String deliveryAddress;
 }

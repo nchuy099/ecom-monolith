@@ -13,4 +13,6 @@ public class CategoryResponse {
   private UUID parentId;
   private String name;
   private String description;
+  private String slug;
+  private String icon;
 }

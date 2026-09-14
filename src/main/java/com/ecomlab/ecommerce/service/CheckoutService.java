@@ -5,4 +5,6 @@ import java.util.UUID;
 
 public interface CheckoutService {
   CheckoutResponse checkout(UUID userId, UUID addressId);
+
+  CheckoutResponse preview(UUID userId, UUID addressId);
 }

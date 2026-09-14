@@ -3,7 +3,7 @@ package com.ecomlab.ecommerce.service.impl;
 import com.ecomlab.ecommerce.common.enums.OrderStatus;
 import com.ecomlab.ecommerce.common.enums.Role;
 import com.ecomlab.ecommerce.common.enums.ShipmentStatus;
-import com.ecomlab.ecommerce.dto.response.ShipmentSummaryResponse;
+import com.ecomlab.ecommerce.dto.response.ShipmentResponse;
 import com.ecomlab.ecommerce.entity.ShipmentEntity;
 import com.ecomlab.ecommerce.entity.TrackingEventEntity;
 import com.ecomlab.ecommerce.entity.UserEntity;
@@ -16,6 +16,9 @@ import com.ecomlab.ecommerce.service.ShipperShipmentService;
 import com.ecomlab.ecommerce.service.builder.ShipmentResponseBuilder;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ShipperShipmentServiceImpl implements ShipperShipmentService {
+  private static final ZoneId BUSINESS_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
+  private static final EnumSet<ShipmentStatus> TODAY_ACTIVE_STATUSES =
+      EnumSet.of(
+          ShipmentStatus.PENDING_PACKING,
+          ShipmentStatus.READY_FOR_PICKUP,
+          ShipmentStatus.PICKED_UP,
+          ShipmentStatus.IN_TRANSIT,
+          ShipmentStatus.OUT_FOR_DELIVERY);
+
   private final ShipmentRepository shipmentRepository;
   private final UserRepository userRepository;
   private final TrackingEventRepository trackingEventRepository;
@@ -65,10 +77,39 @@ public class ShipperShipmentServiceImpl implements ShipperShipmentService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<ShipmentSummaryResponse> getAssignedShipments(UUID shipperId) {
+  public List<ShipmentResponse> getAssignedShipments(UUID shipperId) {
     return shipmentRepository.findAssignedByShipperId(shipperId).stream()
-        .map(ShipmentResponseBuilder::summary)
+        .map(ShipmentResponseBuilder::build)
         .toList();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<ShipmentResponse> getTodayShipments(UUID shipperId) {
+    return shipmentRepository
+        .findTodayByShipperId(
+            shipperId, TODAY_ACTIVE_STATUSES, ShipmentStatus.DELIVERED, startOfBusinessDay())
+        .stream()
+        .map(ShipmentResponseBuilder::build)
+        .toList();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public ShipmentResponse findByTrackingNumber(UUID shipperId, String trackingNumber) {
+    String normalizedTrackingNumber = normalizeTrackingNumber(trackingNumber);
+
+    ShipmentEntity shipment =
+        shipmentRepository
+            .findAssignedByTrackingNumber(shipperId, normalizedTrackingNumber)
+            .orElseThrow(
+                () ->
+                    new BusinessException(
+                        "SHIPMENT_NOT_FOUND",
+                        "Shipment not found for current shipper",
+                        HttpStatus.NOT_FOUND));
+
+    return ShipmentResponseBuilder.build(shipment);
   }
 
   @Override
@@ -96,10 +137,18 @@ public class ShipperShipmentServiceImpl implements ShipperShipmentService {
           "INVALID_SHIPMENT_TRANSITION", "Invalid shipment transition", HttpStatus.CONFLICT);
     }
 
+    boolean deliveredNow = next == ShipmentStatus.DELIVERED;
     shipment.setStatus(next);
+    if (deliveredNow) {
+      consumeReservedStock(shipment);
+    }
     trackingEventRepository.save(
         trackingEvent(shipment, next, note, latitude, longitude, proofUrl));
     completeOrderWhenAllShipmentsDelivered(shipment);
+  }
+
+  private void consumeReservedStock(ShipmentEntity shipment) {
+    shipment.getItems().forEach(item -> item.getInventory().consumeReserved(item.getQuantity()));
   }
 
   private void completeOrderWhenAllShipmentsDelivered(ShipmentEntity shipment) {
@@ -120,7 +169,7 @@ public class ShipperShipmentServiceImpl implements ShipperShipmentService {
 
   private ShipmentEntity shipment(UUID shipmentId) {
     return shipmentRepository
-        .findById(shipmentId)
+        .findByIdWithItems(shipmentId)
         .orElseThrow(
             () ->
                 new BusinessException(
@@ -134,6 +183,19 @@ public class ShipperShipmentServiceImpl implements ShipperShipmentService {
       throw new BusinessException(
           "INVALID_SHIPMENT_STATUS", "Unknown shipment status", HttpStatus.BAD_REQUEST);
     }
+  }
+
+  private Instant startOfBusinessDay() {
+    return LocalDate.now(BUSINESS_ZONE).atStartOfDay(BUSINESS_ZONE).toInstant();
+  }
+
+  private String normalizeTrackingNumber(String trackingNumber) {
+    if (trackingNumber == null || trackingNumber.isBlank()) {
+      throw new BusinessException(
+          "TRACKING_NUMBER_REQUIRED", "Tracking number is required", HttpStatus.BAD_REQUEST);
+    }
+
+    return trackingNumber.trim();
   }
 
   private TrackingEventEntity trackingEvent(
@@ -157,7 +219,9 @@ public class ShipperShipmentServiceImpl implements ShipperShipmentService {
 
   private boolean allowed(ShipmentStatus from, ShipmentStatus to) {
     return switch (from) {
-      case READY_FOR_PICKUP -> to == ShipmentStatus.PICKED_UP;
+      case PENDING_PACKING -> to == ShipmentStatus.OUT_FOR_DELIVERY;
+      case READY_FOR_PICKUP ->
+          to == ShipmentStatus.PICKED_UP || to == ShipmentStatus.OUT_FOR_DELIVERY;
       case PICKED_UP -> to == ShipmentStatus.IN_TRANSIT;
       case IN_TRANSIT ->
           to == ShipmentStatus.OUT_FOR_DELIVERY || to == ShipmentStatus.DELIVERY_FAILED;

@@ -29,6 +29,9 @@ public class WarehouseEntity extends BaseEntity {
   @Column(name = "address_line", nullable = false)
   private String addressLine;
 
+  @Column(name = "priority_area", nullable = false)
+  private String priorityArea;
+
   @Column(nullable = false, precision = 9, scale = 6)
   private BigDecimal latitude;
 

@@ -21,8 +21,10 @@ import com.ecomlab.ecommerce.dto.request.CreateProductRequest;
 import com.ecomlab.ecommerce.dto.request.CreateProductVariantRequest;
 import com.ecomlab.ecommerce.dto.request.CreateReturnRequest;
 import com.ecomlab.ecommerce.dto.request.PaymentWebhookRequest;
+import com.ecomlab.ecommerce.dto.request.ShippingZoneRequest;
 import com.ecomlab.ecommerce.dto.request.UpsertInventoryRequest;
 import com.ecomlab.ecommerce.dto.request.WarehouseRequest;
+import com.ecomlab.ecommerce.dto.request.WarehouseShippingZoneRequest;
 import com.ecomlab.ecommerce.dto.response.AddressResponse;
 import com.ecomlab.ecommerce.dto.response.CartResponse;
 import com.ecomlab.ecommerce.dto.response.CategoryResponse;
@@ -40,9 +42,11 @@ import com.ecomlab.ecommerce.dto.response.ProductVariantDetailResponse;
 import com.ecomlab.ecommerce.dto.response.ReturnResponse;
 import com.ecomlab.ecommerce.dto.response.ShipmentResponse;
 import com.ecomlab.ecommerce.dto.response.ShipmentSummaryResponse;
+import com.ecomlab.ecommerce.dto.response.ShippingZoneResponse;
 import com.ecomlab.ecommerce.dto.response.TokenPairResponse;
 import com.ecomlab.ecommerce.dto.response.UserResponse;
 import com.ecomlab.ecommerce.dto.response.WarehouseResponse;
+import com.ecomlab.ecommerce.dto.response.WarehouseShippingZoneResponse;
 import com.ecomlab.ecommerce.service.AdminProductService;
 import com.ecomlab.ecommerce.service.AuthenticationService;
 import com.ecomlab.ecommerce.service.CartService;
@@ -57,8 +61,10 @@ import com.ecomlab.ecommerce.service.ProductCatalogService;
 import com.ecomlab.ecommerce.service.ReturnService;
 import com.ecomlab.ecommerce.service.ShipmentAdminService;
 import com.ecomlab.ecommerce.service.ShipperShipmentService;
+import com.ecomlab.ecommerce.service.ShippingZoneService;
 import com.ecomlab.ecommerce.service.UserService;
 import com.ecomlab.ecommerce.service.WarehouseService;
+import com.ecomlab.ecommerce.service.WarehouseShippingZoneService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -80,6 +86,7 @@ import org.springframework.test.web.servlet.MockMvc;
       AdminNotificationController.class,
       AdminProductController.class,
       AdminShipmentController.class,
+      AdminShippingZoneController.class,
       AdminWarehouseController.class,
       AuthController.class,
       CartController.class,
@@ -106,6 +113,8 @@ class ControllerApiTest {
   private static final UUID NOTIFICATION_ID =
       UUID.fromString("00000000-0000-0000-0000-000000000008");
   private static final UUID PAYMENT_ID = UUID.fromString("00000000-0000-0000-0000-000000000009");
+  private static final UUID SHIPPING_ZONE_ID =
+      UUID.fromString("00000000-0000-0000-0000-000000000010");
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
@@ -124,8 +133,10 @@ class ControllerApiTest {
   @MockitoBean private ReturnService returnService;
   @MockitoBean private ShipmentAdminService shipmentAdminService;
   @MockitoBean private ShipperShipmentService shipperShipmentService;
+  @MockitoBean private ShippingZoneService shippingZoneService;
   @MockitoBean private UserService userService;
   @MockitoBean private WarehouseService warehouseService;
+  @MockitoBean private WarehouseShippingZoneService warehouseShippingZoneService;
 
   @Test
   void admin_inventory_api_endpoints_delegate_to_service() throws Exception {
@@ -244,6 +255,11 @@ class ControllerApiTest {
     when(warehouseService.create(any(WarehouseRequest.class))).thenReturn(warehouseResponse());
     when(warehouseService.update(eq(WAREHOUSE_ID), any(WarehouseRequest.class)))
         .thenReturn(warehouseResponse());
+    when(warehouseShippingZoneService.zones(WAREHOUSE_ID))
+        .thenReturn(List.of(warehouseShippingZoneResponse()));
+    when(warehouseShippingZoneService.replace(
+            eq(WAREHOUSE_ID), any(WarehouseShippingZoneRequest.class)))
+        .thenReturn(List.of(warehouseShippingZoneResponse()));
 
     mockMvc.perform(get("/api/v1/admin/warehouses")).andExpect(status().isOk());
     mockMvc
@@ -255,11 +271,49 @@ class ControllerApiTest {
     mockMvc
         .perform(delete("/api/v1/admin/warehouses/{id}", WAREHOUSE_ID))
         .andExpect(status().isNoContent());
+    mockMvc
+        .perform(get("/api/v1/admin/warehouses/{id}/shipping-zones", WAREHOUSE_ID))
+        .andExpect(status().isOk());
+    mockMvc
+        .perform(
+            putJson(
+                "/api/v1/admin/warehouses/" + WAREHOUSE_ID + "/shipping-zones",
+                warehouseShippingZoneRequest()))
+        .andExpect(status().isOk());
 
     verify(warehouseService).warehouses();
     verify(warehouseService).create(any(WarehouseRequest.class));
     verify(warehouseService).update(eq(WAREHOUSE_ID), any(WarehouseRequest.class));
     verify(warehouseService).delete(WAREHOUSE_ID);
+    verify(warehouseShippingZoneService).zones(WAREHOUSE_ID);
+    verify(warehouseShippingZoneService)
+        .replace(eq(WAREHOUSE_ID), any(WarehouseShippingZoneRequest.class));
+  }
+
+  @Test
+  void admin_shipping_zone_api_endpoints_delegate_to_service() throws Exception {
+    when(shippingZoneService.shippingZones()).thenReturn(List.of(shippingZoneResponse()));
+    when(shippingZoneService.create(any(ShippingZoneRequest.class)))
+        .thenReturn(shippingZoneResponse());
+    when(shippingZoneService.update(eq(SHIPPING_ZONE_ID), any(ShippingZoneRequest.class)))
+        .thenReturn(shippingZoneResponse());
+
+    mockMvc.perform(get("/api/v1/admin/shipping-zones")).andExpect(status().isOk());
+    mockMvc
+        .perform(postJson("/api/v1/admin/shipping-zones", shippingZoneRequest()))
+        .andExpect(status().isCreated());
+    mockMvc
+        .perform(
+            patchJson("/api/v1/admin/shipping-zones/" + SHIPPING_ZONE_ID, shippingZoneRequest()))
+        .andExpect(status().isOk());
+    mockMvc
+        .perform(delete("/api/v1/admin/shipping-zones/{id}", SHIPPING_ZONE_ID))
+        .andExpect(status().isNoContent());
+
+    verify(shippingZoneService).shippingZones();
+    verify(shippingZoneService).create(any(ShippingZoneRequest.class));
+    verify(shippingZoneService).update(eq(SHIPPING_ZONE_ID), any(ShippingZoneRequest.class));
+    verify(shippingZoneService).delete(SHIPPING_ZONE_ID);
   }
 
   @Test
@@ -380,6 +434,8 @@ class ControllerApiTest {
                 .build());
     when(orderService.getDetails(USER_ID, ORDER_ID)).thenReturn(orderResponse());
     when(orderService.cancel(USER_ID, ORDER_ID)).thenReturn(orderResponse());
+    when(customerShipmentService.getMyOrderShipments(USER_ID, ORDER_ID))
+        .thenReturn(List.of(shipmentResponse()));
 
     mockMvc
         .perform(
@@ -393,11 +449,15 @@ class ControllerApiTest {
         .perform(get("/api/v1/orders/{id}", ORDER_ID).principal(userPrincipal()))
         .andExpect(status().isOk());
     mockMvc
+        .perform(get("/api/v1/orders/{id}/shipments", ORDER_ID).principal(userPrincipal()))
+        .andExpect(status().isOk());
+    mockMvc
         .perform(post("/api/v1/orders/{id}/cancel", ORDER_ID).principal(userPrincipal()))
         .andExpect(status().isOk());
 
     verify(orderService).getMyOrders(USER_ID, OrderStatus.CONFIRMED, "cursor", 10);
     verify(orderService).getDetails(USER_ID, ORDER_ID);
+    verify(customerShipmentService).getMyOrderShipments(USER_ID, ORDER_ID);
     verify(orderService).cancel(USER_ID, ORDER_ID);
   }
 
@@ -430,7 +490,14 @@ class ControllerApiTest {
   void product_api_endpoints_delegate_to_service() throws Exception {
     when(productCatalogService.detail(PRODUCT_ID)).thenReturn(List.of(productDetailResponse()));
     when(productCatalogService.search(
-            "phone", PRODUCT_ID, new BigDecimal("100.00"), new BigDecimal("500.00"), "cursor", 10))
+            "phone",
+            PRODUCT_ID,
+            new BigDecimal("100.00"),
+            new BigDecimal("500.00"),
+            false,
+            null,
+            "cursor",
+            10))
         .thenReturn(
             CursorPageResponse.<ProductSummaryResponse>builder()
                 .content(List.of(productSummaryResponse()))
@@ -453,7 +520,14 @@ class ControllerApiTest {
     verify(productCatalogService).detail(PRODUCT_ID);
     verify(productCatalogService)
         .search(
-            "phone", PRODUCT_ID, new BigDecimal("100.00"), new BigDecimal("500.00"), "cursor", 10);
+            "phone",
+            PRODUCT_ID,
+            new BigDecimal("100.00"),
+            new BigDecimal("500.00"),
+            false,
+            null,
+            "cursor",
+            10);
   }
 
   @Test
@@ -483,7 +557,7 @@ class ControllerApiTest {
   @Test
   void shipper_shipment_api_endpoints_delegate_to_service() throws Exception {
     when(shipperShipmentService.getAssignedShipments(USER_ID))
-        .thenReturn(List.of(shipmentSummaryResponse()));
+        .thenReturn(List.of(shipmentResponse()));
 
     mockMvc
         .perform(get("/api/v1/shipper/shipments").principal(userPrincipal()))
@@ -603,8 +677,23 @@ class ControllerApiTest {
         "code", "WH-1",
         "name", "Main Warehouse",
         "addressLine", "1 Street",
+        "priorityArea", "Hà Nội",
         "latitude", "10.000000",
         "longitude", "106.000000");
+  }
+
+  private Map<String, Object> shippingZoneRequest() {
+    return Map.of(
+        "code", "NORTH",
+        "name", "Miền Bắc",
+        "matchedCities", List.of("Hà Nội", "Ha Noi"));
+  }
+
+  private Map<String, Object> warehouseShippingZoneRequest() {
+    return Map.of(
+        "zones",
+        List.of(
+            Map.of("shippingZoneId", SHIPPING_ZONE_ID.toString(), "priority", 1, "active", true)));
   }
 
   private Map<String, Object> inventoryRequest() {
@@ -721,8 +810,30 @@ class ControllerApiTest {
         .code("WH-1")
         .name("Main Warehouse")
         .addressLine("1 Street")
+        .priorityArea("Hà Nội")
         .latitude(new BigDecimal("10.000000"))
         .longitude(new BigDecimal("106.000000"))
+        .active(true)
+        .build();
+  }
+
+  private ShippingZoneResponse shippingZoneResponse() {
+    return ShippingZoneResponse.builder()
+        .id(SHIPPING_ZONE_ID)
+        .code("NORTH")
+        .name("Miền Bắc")
+        .matchedCities(List.of("Hà Nội", "Ha Noi"))
+        .active(true)
+        .build();
+  }
+
+  private WarehouseShippingZoneResponse warehouseShippingZoneResponse() {
+    return WarehouseShippingZoneResponse.builder()
+        .id(UUID.randomUUID())
+        .shippingZoneId(SHIPPING_ZONE_ID)
+        .shippingZoneCode("NORTH")
+        .shippingZoneName("Miền Bắc")
+        .priority(1)
         .active(true)
         .build();
   }
