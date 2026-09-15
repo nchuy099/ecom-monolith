@@ -32,4 +32,7 @@ public class ReturnItemEntity extends BaseEntity {
 
   @Column(name = "received_quantity", nullable = false)
   private int receivedQuantity;
+
+  @Column(name = "restocked_quantity", nullable = false)
+  private int restockedQuantity;
 }

@@ -3,6 +3,9 @@ package com.ecomlab.ecommerce.service.impl;
 import com.ecomlab.ecommerce.common.enums.OrderStatus;
 import com.ecomlab.ecommerce.common.enums.Role;
 import com.ecomlab.ecommerce.common.enums.ShipmentStatus;
+import com.ecomlab.ecommerce.common.enums.ShipmentType;
+import com.ecomlab.ecommerce.common.enums.ReturnStatus;
+import com.ecomlab.ecommerce.common.enums.PaymentStatus;
 import com.ecomlab.ecommerce.dto.response.ShipmentResponse;
 import com.ecomlab.ecommerce.entity.ShipmentEntity;
 import com.ecomlab.ecommerce.entity.TrackingEventEntity;
@@ -11,6 +14,7 @@ import com.ecomlab.ecommerce.exception.BusinessException;
 import com.ecomlab.ecommerce.repository.ShipmentRepository;
 import com.ecomlab.ecommerce.repository.TrackingEventRepository;
 import com.ecomlab.ecommerce.repository.UserRepository;
+import com.ecomlab.ecommerce.repository.PaymentRepository;
 import com.ecomlab.ecommerce.service.NotificationService;
 import com.ecomlab.ecommerce.service.ShipperShipmentService;
 import com.ecomlab.ecommerce.service.builder.ShipmentResponseBuilder;
@@ -42,6 +46,7 @@ public class ShipperShipmentServiceImpl implements ShipperShipmentService {
   private final UserRepository userRepository;
   private final TrackingEventRepository trackingEventRepository;
   private final NotificationService notificationService;
+  private final PaymentRepository paymentRepository;
 
   @Override
   @Transactional
@@ -139,12 +144,16 @@ public class ShipperShipmentServiceImpl implements ShipperShipmentService {
 
     boolean deliveredNow = next == ShipmentStatus.DELIVERED;
     shipment.setStatus(next);
-    if (deliveredNow) {
+    if (deliveredNow && shipment.getType() == ShipmentType.OUTBOUND) {
       consumeReservedStock(shipment);
     }
     trackingEventRepository.save(
         trackingEvent(shipment, next, note, latitude, longitude, proofUrl));
-    completeOrderWhenAllShipmentsDelivered(shipment);
+    if (shipment.getType() == ShipmentType.OUTBOUND) {
+      completeOrderWhenAllShipmentsDelivered(shipment);
+    } else if (deliveredNow) {
+      markReturnReceivedWhenAllShipmentsDelivered(shipment);
+    }
   }
 
   private void consumeReservedStock(ShipmentEntity shipment) {
@@ -164,7 +173,28 @@ public class ShipperShipmentServiceImpl implements ShipperShipmentService {
     }
 
     shipment.getOrder().setStatus(OrderStatus.COMPLETED);
+    shipment.getOrder().setCompletedAt(Instant.now());
+    paymentRepository
+        .findPendingCodByOrderId(shipment.getOrder().getId())
+        .forEach(
+            payment -> {
+              payment.setStatus(PaymentStatus.SUCCEEDED);
+              payment.setPaidAt(Instant.now());
+            });
     notificationService.queueShipmentDelivered(shipment.getOrder());
+  }
+
+  private void markReturnReceivedWhenAllShipmentsDelivered(ShipmentEntity shipment) {
+    var returnRequest = shipment.getReturnRequest();
+    if (returnRequest == null) {
+      return;
+    }
+    boolean allDelivered =
+        shipmentRepository.findReturnShipmentsByReturnId(returnRequest.getId()).stream()
+            .allMatch(candidate -> candidate.getStatus() == ShipmentStatus.DELIVERED);
+    if (allDelivered && returnRequest.getStatus() == ReturnStatus.APPROVED) {
+      returnRequest.setStatus(ReturnStatus.RECEIVED);
+    }
   }
 
   private ShipmentEntity shipment(UUID shipmentId) {

@@ -26,6 +26,10 @@ public class ShipmentEntity extends BaseEntity {
   private OrderEntity order;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "return_id")
+  private ReturnRequestEntity returnRequest;
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "warehouse_id", nullable = false)
   private WarehouseEntity warehouse;
 
@@ -40,6 +44,14 @@ public class ShipmentEntity extends BaseEntity {
   @Column(nullable = false)
   @Builder.Default
   private ShipmentStatus status = ShipmentStatus.PENDING_PACKING;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "shipment_type", nullable = false)
+  @Builder.Default
+  private ShipmentType type = ShipmentType.OUTBOUND;
+
+  @Column(name = "warehouse_received_at")
+  private java.time.Instant warehouseReceivedAt;
 
   @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default

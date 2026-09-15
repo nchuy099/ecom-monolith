@@ -13,7 +13,7 @@ public final class OrderResponseBuilder {
     return OrderResponse.builder()
         .id(order.getId())
         .orderNumber(order.getOrderNumber())
-        .status(frontendStatus(order.getStatus().name()))
+        .status(order.getStatus().name())
         .totalAmount(order.getTotalAmount())
         .city(order.getCity())
         .recipientName(order.getRecipientName())
@@ -44,13 +44,5 @@ public final class OrderResponseBuilder {
         .subtotal(subtotal)
         .imageUrl(item.getVariant().getImageUrl())
         .build();
-  }
-
-  private static String frontendStatus(String status) {
-    return switch (status) {
-      case "PENDING_PAYMENT" -> "PENDING";
-      case "COMPLETED" -> "DELIVERED";
-      default -> status;
-    };
   }
 }

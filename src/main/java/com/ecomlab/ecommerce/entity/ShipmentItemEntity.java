@@ -28,6 +28,10 @@ public class ShipmentItemEntity extends BaseEntity {
   private OrderItemEntity orderItem;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "return_item_id")
+  private ReturnItemEntity returnItem;
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "inventory_id", nullable = false)
   private InventoryEntity inventory;
 

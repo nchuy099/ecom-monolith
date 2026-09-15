@@ -21,4 +21,18 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, UUID> {
       order by p.createdAt desc
       """)
   List<PaymentEntity> findActiveByOrderIdWithOrder(@Param("orderId") UUID orderId);
+
+  @Query(
+      """
+      select p from PaymentEntity p where p.order.id = :orderId and p.status = com.ecomlab.ecommerce.common.enums.PaymentStatus.SUCCEEDED
+        and p.isDeleted = false order by p.paidAt desc
+      """)
+  List<PaymentEntity> findSucceededByOrderId(@Param("orderId") UUID orderId);
+
+  @Query(
+      """
+      select p from PaymentEntity p where p.order.id = :orderId and p.provider = 'COD'
+        and p.status = com.ecomlab.ecommerce.common.enums.PaymentStatus.PENDING and p.isDeleted = false
+      """)
+  List<PaymentEntity> findPendingCodByOrderId(@Param("orderId") UUID orderId);
 }

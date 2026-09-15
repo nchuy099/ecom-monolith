@@ -20,6 +20,10 @@ public class ShipmentResponse {
   private UUID shipperId;
   private String shipperName;
   private String status;
+  private String type;
+  private UUID returnId;
+  private Instant warehouseReceivedAt;
+  private List<ShipmentItemResponse> items;
   private String trackingNumber;
   private String recipientName;
   private String recipientPhone;

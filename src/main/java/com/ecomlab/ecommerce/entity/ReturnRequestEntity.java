@@ -3,6 +3,8 @@ package com.ecomlab.ecommerce.entity;
 import com.ecomlab.ecommerce.common.enums.*;
 import jakarta.persistence.*;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -30,4 +32,11 @@ public class ReturnRequestEntity extends BaseEntity {
 
   @Column(nullable = false, length = 1000)
   private String reason;
+
+  @Column(name = "decision_note", length = 1000)
+  private String decisionNote;
+
+  @OneToMany(mappedBy = "returnRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<ReturnItemEntity> items = new ArrayList<>();
 }

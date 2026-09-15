@@ -14,6 +14,7 @@ import com.ecomlab.ecommerce.entity.ShipmentEntity;
 import com.ecomlab.ecommerce.entity.ShipmentItemEntity;
 import com.ecomlab.ecommerce.entity.UserEntity;
 import com.ecomlab.ecommerce.repository.ShipmentRepository;
+import com.ecomlab.ecommerce.repository.PaymentRepository;
 import com.ecomlab.ecommerce.repository.TrackingEventRepository;
 import com.ecomlab.ecommerce.repository.UserRepository;
 import com.ecomlab.ecommerce.service.NotificationService;
@@ -31,12 +32,17 @@ class ShipperShipmentServiceImplTest {
   @Mock private UserRepository userRepository;
   @Mock private TrackingEventRepository trackingEventRepository;
   @Mock private NotificationService notificationService;
+  @Mock private PaymentRepository paymentRepository;
 
   @Test
   void delivered_shipment_consumes_reserved_stock_without_returning_available_quantity() {
     ShipperShipmentServiceImpl service =
         new ShipperShipmentServiceImpl(
-            shipmentRepository, userRepository, trackingEventRepository, notificationService);
+            shipmentRepository,
+            userRepository,
+            trackingEventRepository,
+            notificationService,
+            paymentRepository);
     UUID shipmentId = UUID.randomUUID();
     UUID shipperId = UUID.randomUUID();
     UserEntity shipper = new UserEntity();

@@ -3,6 +3,7 @@ package com.ecomlab.ecommerce.entity;
 import com.ecomlab.ecommerce.common.enums.*;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.*;
 import java.util.UUID;
 import lombok.*;
@@ -52,6 +53,9 @@ public class OrderEntity extends BaseEntity {
 
   @Column(name = "total_amount", nullable = false, precision = 19, scale = 2)
   private BigDecimal totalAmount;
+
+  @Column(name = "completed_at")
+  private Instant completedAt;
 
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default

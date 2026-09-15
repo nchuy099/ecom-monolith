@@ -26,8 +26,18 @@ public interface ShipmentRepository extends JpaRepository<ShipmentEntity, UUID> 
 
   @Query(
       """
+      select distinct s from ShipmentEntity s join fetch s.order join fetch s.warehouse
+      left join fetch s.returnRequest left join fetch s.shipper left join fetch s.items si
+      left join fetch si.inventory left join fetch si.returnItem
+      where s.id = :shipmentId and s.isDeleted = false
+      """)
+  Optional<ShipmentEntity> findByIdWithReturnItems(@Param("shipmentId") UUID shipmentId);
+
+  @Query(
+      """
       select s from ShipmentEntity s join fetch s.order o join fetch s.warehouse left join fetch s.shipper
-      where o.user.id = :userId and s.isDeleted = false order by s.createdAt desc
+      where o.user.id = :userId and s.type = com.ecomlab.ecommerce.common.enums.ShipmentType.OUTBOUND
+        and s.isDeleted = false order by s.createdAt desc
       """)
   List<ShipmentEntity> findAllByCustomerId(@Param("userId") UUID userId);
 
@@ -40,6 +50,7 @@ public interface ShipmentRepository extends JpaRepository<ShipmentEntity, UUID> 
       left join fetch s.shipper
       where o.id = :orderId
         and o.user.id = :userId
+        and s.type = com.ecomlab.ecommerce.common.enums.ShipmentType.OUTBOUND
         and s.isDeleted = false
       order by s.createdAt asc
       """)
@@ -53,10 +64,29 @@ public interface ShipmentRepository extends JpaRepository<ShipmentEntity, UUID> 
       join fetch s.order
       join fetch s.warehouse
       left join fetch s.shipper
-      where s.isDeleted = false
+      where s.type = com.ecomlab.ecommerce.common.enums.ShipmentType.OUTBOUND and s.isDeleted = false
       order by s.updatedAt desc
       """)
   List<ShipmentEntity> findAllActiveForAdmin();
+
+  @Query(
+      """
+      select distinct s from ShipmentEntity s join fetch s.order join fetch s.warehouse
+      left join fetch s.shipper left join fetch s.returnRequest
+      where s.type = com.ecomlab.ecommerce.common.enums.ShipmentType.RETURN
+        and s.isDeleted = false order by s.updatedAt desc
+      """)
+  List<ShipmentEntity> findAllReturnShipmentsForAdmin();
+
+  @Query(
+      """
+      select distinct s from ShipmentEntity s join fetch s.order join fetch s.warehouse
+      left join fetch s.shipper left join fetch s.items si left join fetch si.inventory
+      left join fetch si.returnItem
+      where s.returnRequest.id = :returnId and s.type = com.ecomlab.ecommerce.common.enums.ShipmentType.RETURN
+        and s.isDeleted = false
+      """)
+  List<ShipmentEntity> findReturnShipmentsByReturnId(@Param("returnId") UUID returnId);
 
   @Query(
       """
@@ -113,7 +143,7 @@ public interface ShipmentRepository extends JpaRepository<ShipmentEntity, UUID> 
       join fetch s.order o
       left join fetch s.items si
       left join fetch si.inventory
-      where o.id = :orderId
+      where o.id = :orderId and s.type = com.ecomlab.ecommerce.common.enums.ShipmentType.OUTBOUND
         and s.isDeleted = false
       """)
   List<ShipmentEntity> findActiveByOrderIdWithItems(@Param("orderId") UUID orderId);

@@ -2,6 +2,7 @@ package com.ecomlab.ecommerce.service.builder;
 
 import com.ecomlab.ecommerce.common.util.Haversine;
 import com.ecomlab.ecommerce.dto.response.ShipmentResponse;
+import com.ecomlab.ecommerce.dto.response.ShipmentItemResponse;
 import com.ecomlab.ecommerce.dto.response.ShipmentSummaryResponse;
 import com.ecomlab.ecommerce.dto.response.TrackingEventResponse;
 import com.ecomlab.ecommerce.entity.ShipmentEntity;
@@ -28,6 +29,21 @@ public final class ShipmentResponseBuilder {
         .shipperId(shipment.getShipper() == null ? null : shipment.getShipper().getId())
         .shipperName(shipment.getShipper() == null ? null : shipment.getShipper().getDisplayName())
         .status(shipment.getStatus().name())
+        .type(shipment.getType().name())
+        .returnId(shipment.getReturnRequest() == null ? null : shipment.getReturnRequest().getId())
+        .warehouseReceivedAt(shipment.getWarehouseReceivedAt())
+        .items(
+            shipment.getItems().stream()
+                .map(
+                    item ->
+                        ShipmentItemResponse.builder()
+                            .id(item.getId())
+                            .returnItemId(item.getReturnItem() == null ? null : item.getReturnItem().getId())
+                            .sku(item.getOrderItem().getSkuSnapshot())
+                            .name(item.getOrderItem().getNameSnapshot())
+                            .quantity(item.getQuantity())
+                            .build())
+                .toList())
         .trackingNumber(shipment.getTrackingNumber())
         .recipientName(shipment.getOrder().getRecipientName())
         .recipientPhone(shipment.getOrder().getPhone())

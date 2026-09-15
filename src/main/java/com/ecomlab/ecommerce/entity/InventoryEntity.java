@@ -56,4 +56,11 @@ public class InventoryEntity extends BaseEntity {
     }
     reservedQuantity -= q;
   }
+
+  public void restock(int q) {
+    if (q <= 0) {
+      throw new IllegalArgumentException("Invalid restock quantity");
+    }
+    availableQuantity += q;
+  }
 }

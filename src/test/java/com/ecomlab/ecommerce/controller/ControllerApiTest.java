@@ -115,6 +115,8 @@ class ControllerApiTest {
   private static final UUID PAYMENT_ID = UUID.fromString("00000000-0000-0000-0000-000000000009");
   private static final UUID SHIPPING_ZONE_ID =
       UUID.fromString("00000000-0000-0000-0000-000000000010");
+  private static final UUID ORDER_ITEM_ID =
+      UUID.fromString("00000000-0000-0000-0000-000000000011");
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
@@ -736,7 +738,13 @@ class ControllerApiTest {
   }
 
   private Map<String, Object> returnRequest() {
-    return Map.of("orderId", ORDER_ID.toString(), "reason", "Broken");
+    return Map.of(
+        "orderId",
+        ORDER_ID.toString(),
+        "reason",
+        "Broken",
+        "items",
+        List.of(Map.of("orderItemId", ORDER_ITEM_ID.toString(), "quantity", 1)));
   }
 
   private Map<String, Object> trackingRequest() {
