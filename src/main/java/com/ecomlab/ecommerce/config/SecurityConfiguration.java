@@ -65,7 +65,9 @@ public class SecurityConfiguration {
         List.of(
             "http://localhost:3001",
             "http://localhost:5173",
+            "http://localhost:5174",
             "https://*.vercel.app",
+            "https://domelike-ora-gorgedly.ngrok-free.dev",
             allowedOrigin));
     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));

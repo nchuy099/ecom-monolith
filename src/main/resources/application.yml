@@ -40,6 +40,14 @@ ecom:
     batch-size: ${ECOM_NOTIFICATION_BATCH_SIZE:25}
     max-attempts: ${ECOM_NOTIFICATION_MAX_ATTEMPTS:5}
     from: ${ECOM_MAIL_FROM:no-reply@ecomlab.local}
+  r2:
+    enabled: ${R2_ENABLED:false}
+    account-id: ${R2_ACCOUNT_ID:50b40b39cb4aa8ab3252e4a598ef812c}
+    access-key-id: ${R2_ACCESS_KEY_ID:}
+    secret-access-key: ${R2_SECRET_ACCESS_KEY:}
+    bucket: ${R2_BUCKET:global-bucket}
+    public-base-url: ${R2_PUBLIC_BASE_URL:https://pub-5ac40ccea3fd44ebab05452a4efbd198.r2.dev}
+    max-image-bytes: ${R2_MAX_IMAGE_BYTES:10485760}
 management:
   health:
     mail:
