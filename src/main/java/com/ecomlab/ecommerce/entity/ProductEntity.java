@@ -36,9 +36,6 @@ public class ProductEntity extends BaseEntity {
   @Column(name = "review_count")
   private Integer reviewCount;
 
-  @Column(length = 80)
-  private String badge;
-
   @Column(nullable = false)
   @Builder.Default
   private boolean active = true;

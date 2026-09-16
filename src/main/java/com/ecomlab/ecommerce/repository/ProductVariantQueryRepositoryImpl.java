@@ -77,8 +77,7 @@ public class ProductVariantQueryRepositoryImpl implements ProductVariantQueryRep
             reservedQuantity,
             variantRoot.get("imageUrl"),
             productJoin.get("rating"),
-            productJoin.get("reviewCount"),
-            productJoin.get("badge")));
+            productJoin.get("reviewCount")));
     query.where(criteriaBuilder.and(filterPredicate, cursorPredicate));
     query.orderBy(
         criteriaBuilder.asc(variantRoot.get("price")), criteriaBuilder.asc(variantRoot.get("id")));

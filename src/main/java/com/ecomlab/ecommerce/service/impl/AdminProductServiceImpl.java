@@ -13,6 +13,7 @@ import com.ecomlab.ecommerce.repository.*;
 import com.ecomlab.ecommerce.service.AdminProductService;
 import com.ecomlab.ecommerce.service.ProductCatalogService;
 import com.ecomlab.ecommerce.service.builder.ProductResponseBuilder;
+import com.ecomlab.ecommerce.service.media.R2StorageService;
 import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class AdminProductServiceImpl implements AdminProductService {
   private final CategoryRepository categoryRepository;
   private final ProductVariantRepository productVariantRepository;
   private final ProductCatalogService productCatalogService;
+  private final R2StorageService storageService;
 
   @Transactional(readOnly = true)
   public CursorPageResponse<ProductSummaryResponse> list(
@@ -81,6 +83,8 @@ public class AdminProductServiceImpl implements AdminProductService {
     variant.setSku(request.getSku());
     variant.setName(request.getName());
     variant.setPrice(request.getPrice());
+    validateImageUrl(request.getImageUrl());
+    variant.setImageUrl(request.getImageUrl());
     variant.setActive(true);
     ProductVariantEntity saved = productVariantRepository.save(variant);
     productCatalogService.evictDetail(product.getId());
@@ -94,6 +98,8 @@ public class AdminProductServiceImpl implements AdminProductService {
     variant.setSku(request.getSku());
     variant.setName(request.getName());
     variant.setPrice(request.getPrice());
+    validateImageUrl(request.getImageUrl());
+    variant.setImageUrl(request.getImageUrl());
     productCatalogService.evictDetail(variant.getProduct().getId());
     return ProductResponseBuilder.adminVariant(variant);
   }
@@ -133,5 +139,14 @@ public class AdminProductServiceImpl implements AdminProductService {
             () ->
                 new BusinessException(
                     "CATEGORY_NOT_FOUND", "CategoryEntity not found", HttpStatus.NOT_FOUND));
+  }
+
+  private void validateImageUrl(String imageUrl) {
+    if (imageUrl != null && !imageUrl.isBlank() && !storageService.isR2Url(imageUrl)) {
+      throw new BusinessException(
+          "IMAGE_NOT_IN_R2",
+          "Ảnh sản phẩm phải được upload vào Cloudflare R2",
+          HttpStatus.BAD_REQUEST);
+    }
   }
 }

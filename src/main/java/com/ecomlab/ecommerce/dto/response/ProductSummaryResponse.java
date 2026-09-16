@@ -28,5 +28,4 @@ public class ProductSummaryResponse {
   private String imageUrl;
   private BigDecimal rating;
   private Integer reviewCount;
-  private String badge;
 }

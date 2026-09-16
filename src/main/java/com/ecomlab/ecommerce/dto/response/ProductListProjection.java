@@ -17,8 +17,7 @@ public record ProductListProjection(
     long reservedQuantity,
     String imageUrl,
     BigDecimal rating,
-    Integer reviewCount,
-    String badge) {
+    Integer reviewCount) {
   public ProductListProjection(
       UUID id,
       String name,
@@ -42,7 +41,6 @@ public record ProductListProjection(
         price,
         availableQuantity,
         reservedQuantity,
-        null,
         null,
         null,
         null);

@@ -27,7 +27,6 @@ public final class ProductResponseBuilder {
         .categoryName(product.getCategory().getName())
         .rating(product.getRating())
         .reviewCount(product.getReviewCount())
-        .badge(product.getBadge())
         .active(product.isActive())
         .build();
   }
@@ -48,7 +47,6 @@ public final class ProductResponseBuilder {
         .imageUrl(product.imageUrl())
         .rating(product.rating())
         .reviewCount(product.reviewCount())
-        .badge(product.badge())
         .build();
   }
 
@@ -96,6 +94,7 @@ public final class ProductResponseBuilder {
         .sku(variant.getSku())
         .name(variant.getName())
         .price(variant.getPrice())
+        .imageUrl(variant.getImageUrl())
         .active(variant.isActive())
         .build();
   }

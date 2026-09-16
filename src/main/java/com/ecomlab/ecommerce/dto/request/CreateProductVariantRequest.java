@@ -21,4 +21,7 @@ public class CreateProductVariantRequest {
   @NotNull
   @DecimalMin("0.00")
   private BigDecimal price;
+
+  @Size(max = 500)
+  private String imageUrl;
 }

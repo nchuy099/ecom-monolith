@@ -15,5 +15,6 @@ public class ProductVariantAdminResponse {
   private String sku;
   private String name;
   private BigDecimal price;
+  private String imageUrl;
   private boolean active;
 }
