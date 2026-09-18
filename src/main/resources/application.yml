@@ -2,7 +2,7 @@ spring:
   application:
     name: ecom-monolith-java
   datasource:
-    url: ${ECOM_DB_URL:jdbc:mysql://localhost:3307/ecom_monolith_java}
+    url: ${ECOM_DB_URL:jdbc:postgresql://localhost:5433/ecom_monolith_java}
     username: ${ECOM_DB_USERNAME:ecom}
     password: ${ECOM_DB_PASSWORD:ecom}
   jpa:
@@ -23,6 +23,8 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 ecom:
+  cors:
+    allowed-origin: ${ECOM_ALLOWED_ORIGIN:https://ecom-monolith-java-frontend.vercel.app}
   jwt:
     secret: ${JWT_SECRET:change-me-change-me-change-me-32bytes}
     access-token-ttl: PT15M
@@ -39,4 +41,10 @@ ecom:
     max-attempts: ${ECOM_NOTIFICATION_MAX_ATTEMPTS:5}
     from: ${ECOM_MAIL_FROM:no-reply@ecomlab.local}
 management:
+  health:
+    mail:
+      enabled: false
   endpoints.web.exposure.include: health,info,metrics,caches
+
+server:
+  port: ${PORT:8080}

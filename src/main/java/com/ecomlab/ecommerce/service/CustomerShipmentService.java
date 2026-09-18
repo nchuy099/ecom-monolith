@@ -6,4 +6,6 @@ import java.util.UUID;
 
 public interface CustomerShipmentService {
   List<ShipmentResponse> getMyShipments(UUID userId);
+
+  List<ShipmentResponse> getMyOrderShipments(UUID userId, UUID orderId);
 }

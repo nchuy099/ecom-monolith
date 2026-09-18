@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: ecom-monolith-java-api
+    runtime: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: ECOM_DB_URL
+        sync: false
+      - key: ECOM_DB_USERNAME
+        sync: false
+      - key: ECOM_DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ECOM_ALLOWED_ORIGIN
+        sync: false
+      - key: ECOM_EMAIL_ENABLED
+        value: "false"
+      - key: ECOM_NOTIFICATION_WORKER_ENABLED
+        value: "true"

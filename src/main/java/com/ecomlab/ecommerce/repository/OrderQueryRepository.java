@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface OrderQueryRepository {
   List<OrderEntity> findMyOrdersAfterCursor(
       UUID userId, OrderStatus status, OrderListCursor cursor, int limit);
+
+  List<OrderEntity> findOrdersAfterCursor(OrderStatus status, OrderListCursor cursor, int limit);
 }

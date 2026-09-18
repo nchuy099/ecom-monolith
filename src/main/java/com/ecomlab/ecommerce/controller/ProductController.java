@@ -1,6 +1,7 @@
 package com.ecomlab.ecommerce.controller;
 
 import com.ecomlab.ecommerce.dto.response.CursorPageResponse;
+import com.ecomlab.ecommerce.dto.response.InventoryResponse;
 import com.ecomlab.ecommerce.dto.response.ProductSummaryResponse;
 import com.ecomlab.ecommerce.dto.response.ProductVariantDetailResponse;
 import com.ecomlab.ecommerce.service.ProductCatalogService;
@@ -23,15 +24,23 @@ public class ProductController {
     return ResponseEntity.ok(productCatalogService.detail(productId));
   }
 
+  @GetMapping("/{productId}/inventory")
+  public ResponseEntity<List<InventoryResponse>> inventory(@PathVariable UUID productId) {
+    return ResponseEntity.ok(productCatalogService.inventory(productId));
+  }
+
   @GetMapping
   public ResponseEntity<CursorPageResponse<ProductSummaryResponse>> search(
       @RequestParam(required = false) String keyword,
       @RequestParam(required = false) UUID categoryId,
       @RequestParam(required = false) BigDecimal minPrice,
       @RequestParam(required = false) BigDecimal maxPrice,
+      @RequestParam(defaultValue = "false") boolean inStockOnly,
+      @RequestParam(required = false) String sort,
       @RequestParam(required = false) String cursor,
       @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
     return ResponseEntity.ok(
-        productCatalogService.search(keyword, categoryId, minPrice, maxPrice, cursor, size));
+        productCatalogService.search(
+            keyword, categoryId, minPrice, maxPrice, inStockOnly, sort, cursor, size));
   }
 }

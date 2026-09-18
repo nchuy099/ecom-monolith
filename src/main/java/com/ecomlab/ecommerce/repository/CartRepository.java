@@ -10,10 +10,11 @@ import org.springframework.stereotype.Repository;
 public interface CartRepository extends JpaRepository<CartEntity, UUID> {
   @Query(
       """
-      select c
+      select distinct c
       from CartEntity c
       left join fetch c.items i
-      left join fetch i.variant
+      left join fetch i.variant v
+      left join fetch v.product
       where c.user.id = :userId
         and c.isDeleted = false
       """)

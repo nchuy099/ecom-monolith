@@ -19,11 +19,17 @@ public final class CartResponseBuilder {
                   return CartItemResponse.builder()
                       .id(item.getId())
                       .variantId(item.getVariant().getId())
+                      .productId(item.getVariant().getProduct().getId())
+                      .productName(item.getVariant().getProduct().getName())
+                      .variantName(item.getVariant().getName())
                       .sku(item.getVariant().getSku())
                       .name(item.getVariant().getName())
                       .price(item.getVariant().getPrice())
                       .quantity(item.getQuantity())
+                      .lineTotal(subtotal)
                       .subtotal(subtotal)
+                      .imageUrl(item.getVariant().getImageUrl())
+                      .availableQuantity(0)
                       .build();
                 })
             .toList();
@@ -34,6 +40,7 @@ public final class CartResponseBuilder {
             items.stream()
                 .map(CartItemResponse::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add))
+        .itemCount(items.stream().mapToInt(CartItemResponse::getQuantity).sum())
         .build();
   }
 }

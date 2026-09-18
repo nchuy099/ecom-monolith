@@ -2,10 +2,15 @@ package com.ecomlab.ecommerce.controller;
 
 import com.ecomlab.ecommerce.dto.request.CreateProductRequest;
 import com.ecomlab.ecommerce.dto.request.CreateProductVariantRequest;
+import com.ecomlab.ecommerce.dto.response.CursorPageResponse;
 import com.ecomlab.ecommerce.dto.response.ProductAdminResponse;
+import com.ecomlab.ecommerce.dto.response.ProductSummaryResponse;
 import com.ecomlab.ecommerce.dto.response.ProductVariantAdminResponse;
 import com.ecomlab.ecommerce.service.AdminProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +24,21 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminProductController {
   private final AdminProductService adminProductService;
+
+  @GetMapping
+  public ResponseEntity<CursorPageResponse<ProductSummaryResponse>> list(
+      @RequestParam(required = false) String keyword,
+      @RequestParam(required = false) UUID categoryId,
+      @RequestParam(required = false) BigDecimal minPrice,
+      @RequestParam(required = false) BigDecimal maxPrice,
+      @RequestParam(defaultValue = "false") boolean inStockOnly,
+      @RequestParam(required = false) String sort,
+      @RequestParam(required = false) String cursor,
+      @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
+    return ResponseEntity.ok(
+        adminProductService.list(
+            keyword, categoryId, minPrice, maxPrice, inStockOnly, sort, cursor, size));
+  }
 
   @PostMapping
   public ResponseEntity<ProductAdminResponse> create(

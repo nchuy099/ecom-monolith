@@ -17,6 +17,7 @@ public class ProductSummaryResponse {
   private UUID id;
   private String name;
   private UUID categoryId;
+  private String categoryName;
   private boolean active;
   private UUID variantId;
   private String sku;
@@ -24,4 +25,8 @@ public class ProductSummaryResponse {
   private BigDecimal price;
   private long availableQuantity;
   private long reservedQuantity;
+  private String imageUrl;
+  private BigDecimal rating;
+  private Integer reviewCount;
+  private String badge;
 }

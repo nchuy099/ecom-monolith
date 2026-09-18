@@ -1,8 +1,11 @@
 package com.ecomlab.ecommerce.controller;
 
 import com.ecomlab.ecommerce.dto.request.WarehouseRequest;
+import com.ecomlab.ecommerce.dto.request.WarehouseShippingZoneRequest;
 import com.ecomlab.ecommerce.dto.response.WarehouseResponse;
+import com.ecomlab.ecommerce.dto.response.WarehouseShippingZoneResponse;
 import com.ecomlab.ecommerce.service.WarehouseService;
+import com.ecomlab.ecommerce.service.WarehouseShippingZoneService;
 import jakarta.validation.Valid;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminWarehouseController {
   private final WarehouseService warehouseService;
+  private final WarehouseShippingZoneService warehouseShippingZoneService;
 
   @GetMapping
   public ResponseEntity<List<WarehouseResponse>> list() {
@@ -38,5 +42,16 @@ public class AdminWarehouseController {
   public ResponseEntity<Void> delete(@PathVariable UUID id) {
     warehouseService.delete(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{id}/shipping-zones")
+  public ResponseEntity<List<WarehouseShippingZoneResponse>> shippingZones(@PathVariable UUID id) {
+    return ResponseEntity.ok(warehouseShippingZoneService.zones(id));
+  }
+
+  @PutMapping("/{id}/shipping-zones")
+  public ResponseEntity<List<WarehouseShippingZoneResponse>> replaceShippingZones(
+      @PathVariable UUID id, @Valid @RequestBody WarehouseShippingZoneRequest request) {
+    return ResponseEntity.ok(warehouseShippingZoneService.replace(id, request));
   }
 }

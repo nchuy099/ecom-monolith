@@ -8,8 +8,15 @@ import com.ecomlab.ecommerce.dto.response.ProductVariantAdminResponse;
 import com.ecomlab.ecommerce.dto.response.ProductVariantDetailResponse;
 import com.ecomlab.ecommerce.entity.ProductEntity;
 import com.ecomlab.ecommerce.entity.ProductVariantEntity;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 
 public final class ProductResponseBuilder {
+  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final TypeReference<Map<String, String>> ATTRIBUTES_TYPE =
+      new TypeReference<>() {};
+
   private ProductResponseBuilder() {}
 
   public static ProductSummaryResponse summary(ProductEntity product) {
@@ -17,6 +24,10 @@ public final class ProductResponseBuilder {
         .id(product.getId())
         .name(product.getName())
         .categoryId(product.getCategory().getId())
+        .categoryName(product.getCategory().getName())
+        .rating(product.getRating())
+        .reviewCount(product.getReviewCount())
+        .badge(product.getBadge())
         .active(product.isActive())
         .build();
   }
@@ -26,6 +37,7 @@ public final class ProductResponseBuilder {
         .id(product.id())
         .name(product.name())
         .categoryId(product.categoryId())
+        .categoryName(product.categoryName())
         .active(product.active())
         .variantId(product.variantId())
         .sku(product.sku())
@@ -33,6 +45,10 @@ public final class ProductResponseBuilder {
         .price(product.price())
         .availableQuantity(product.availableQuantity())
         .reservedQuantity(product.reservedQuantity())
+        .imageUrl(product.imageUrl())
+        .rating(product.rating())
+        .reviewCount(product.reviewCount())
+        .badge(product.badge())
         .build();
   }
 
@@ -57,6 +73,9 @@ public final class ProductResponseBuilder {
         .price(product.price())
         .availableQuantity(product.availableQuantity())
         .reservedQuantity(product.reservedQuantity())
+        .imageUrl(product.imageUrl())
+        .description(product.description())
+        .attributes(attributes(product.attributesJson()))
         .build();
   }
 
@@ -79,5 +98,17 @@ public final class ProductResponseBuilder {
         .price(variant.getPrice())
         .active(variant.isActive())
         .build();
+  }
+
+  private static Map<String, String> attributes(String attributesJson) {
+    if (attributesJson == null || attributesJson.isBlank()) {
+      return Map.of();
+    }
+
+    try {
+      return OBJECT_MAPPER.readValue(attributesJson, ATTRIBUTES_TYPE);
+    } catch (Exception exception) {
+      return Map.of();
+    }
   }
 }

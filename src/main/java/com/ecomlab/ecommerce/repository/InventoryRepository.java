@@ -56,4 +56,32 @@ public interface InventoryRepository extends JpaRepository<InventoryEntity, UUID
       """)
   List<InventoryEntity> lockByWarehouseAndVariants(
       @Param("warehouseId") UUID warehouseId, @Param("variantIds") Collection<UUID> variantIds);
+
+  @Query(
+      """
+      select i
+      from InventoryEntity i
+      join fetch i.variant
+      where i.warehouse.id = :warehouseId
+        and i.variant.id in :variantIds
+        and i.isDeleted = false
+      order by i.variant.id
+      """)
+  List<InventoryEntity> findByWarehouseAndVariants(
+      @Param("warehouseId") UUID warehouseId, @Param("variantIds") Collection<UUID> variantIds);
+
+  @Query(
+      """
+      select distinct i
+      from InventoryEntity i
+      join fetch i.warehouse
+      join fetch i.variant v
+      join fetch v.product
+      where i.variant.id = :variantId
+        and i.isDeleted = false
+        and i.warehouse.isDeleted = false
+        and i.warehouse.active = true
+      order by i.availableQuantity desc, i.warehouse.name asc
+      """)
+  List<InventoryEntity> findActiveByVariantId(@Param("variantId") UUID variantId);
 }

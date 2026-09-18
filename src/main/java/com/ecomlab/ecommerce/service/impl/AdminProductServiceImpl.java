@@ -3,7 +3,9 @@ package com.ecomlab.ecommerce.service.impl;
 import com.ecomlab.ecommerce.common.enums.*;
 import com.ecomlab.ecommerce.dto.request.CreateProductRequest;
 import com.ecomlab.ecommerce.dto.request.CreateProductVariantRequest;
+import com.ecomlab.ecommerce.dto.response.CursorPageResponse;
 import com.ecomlab.ecommerce.dto.response.ProductAdminResponse;
+import com.ecomlab.ecommerce.dto.response.ProductSummaryResponse;
 import com.ecomlab.ecommerce.dto.response.ProductVariantAdminResponse;
 import com.ecomlab.ecommerce.entity.*;
 import com.ecomlab.ecommerce.exception.BusinessException;
@@ -11,6 +13,7 @@ import com.ecomlab.ecommerce.repository.*;
 import com.ecomlab.ecommerce.service.AdminProductService;
 import com.ecomlab.ecommerce.service.ProductCatalogService;
 import com.ecomlab.ecommerce.service.builder.ProductResponseBuilder;
+import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,20 @@ public class AdminProductServiceImpl implements AdminProductService {
   private final CategoryRepository categoryRepository;
   private final ProductVariantRepository productVariantRepository;
   private final ProductCatalogService productCatalogService;
+
+  @Transactional(readOnly = true)
+  public CursorPageResponse<ProductSummaryResponse> list(
+      String keyword,
+      UUID categoryId,
+      BigDecimal minPrice,
+      BigDecimal maxPrice,
+      boolean inStockOnly,
+      String sort,
+      String cursor,
+      int size) {
+    return productCatalogService.search(
+        keyword, categoryId, minPrice, maxPrice, inStockOnly, sort, cursor, size);
+  }
 
   @Transactional
   public ProductAdminResponse create(CreateProductRequest request) {

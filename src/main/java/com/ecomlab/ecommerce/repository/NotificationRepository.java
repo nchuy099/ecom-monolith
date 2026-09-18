@@ -25,6 +25,17 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
   Page<NotificationEntity> findByStatusAndIsDeletedFalse(
       NotificationStatus status, Pageable pageable);
 
+  @Modifying
+  @Query(
+      """
+      update NotificationEntity n
+      set n.readAt = :readAt
+      where n.user.id = :userId
+        and n.readAt is null
+        and n.isDeleted = false
+      """)
+  int markAllRead(@Param("userId") UUID userId, @Param("readAt") Instant readAt);
+
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query(
       """

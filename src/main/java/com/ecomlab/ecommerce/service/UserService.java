@@ -20,4 +20,6 @@ public interface UserService {
   void deleteAddress(UUID userId, UUID addressId);
 
   void setDefaultAddress(UUID userId, UUID addressId);
+
+  List<UserResponse> shippers();
 }

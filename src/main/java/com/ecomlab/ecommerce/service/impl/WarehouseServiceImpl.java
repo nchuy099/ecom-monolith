@@ -5,6 +5,7 @@ import com.ecomlab.ecommerce.dto.response.WarehouseResponse;
 import com.ecomlab.ecommerce.entity.WarehouseEntity;
 import com.ecomlab.ecommerce.exception.BusinessException;
 import com.ecomlab.ecommerce.repository.WarehouseRepository;
+import com.ecomlab.ecommerce.repository.WarehouseShippingZoneRepository;
 import com.ecomlab.ecommerce.service.WarehouseService;
 import com.ecomlab.ecommerce.service.builder.WarehouseResponseBuilder;
 import java.util.List;
@@ -18,13 +19,20 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class WarehouseServiceImpl implements WarehouseService {
   private final WarehouseRepository warehouseRepository;
+  private final WarehouseShippingZoneRepository warehouseShippingZoneRepository;
 
   @Override
   @Transactional(readOnly = true)
   public List<WarehouseResponse> warehouses() {
     List<WarehouseEntity> warehouses = warehouseRepository.findByIsDeletedFalseOrderByNameAsc();
 
-    return warehouses.stream().map(WarehouseResponseBuilder::build).toList();
+    return warehouses.stream()
+        .map(
+            warehouse ->
+                WarehouseResponseBuilder.build(
+                    warehouse,
+                    warehouseShippingZoneRepository.findByWarehouseId(warehouse.getId())))
+        .toList();
   }
 
   @Override
@@ -68,6 +76,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     warehouse.setCode(request.code());
     warehouse.setName(request.name());
     warehouse.setAddressLine(request.addressLine());
+    warehouse.setPriorityArea(request.priorityArea());
     warehouse.setLatitude(request.latitude());
     warehouse.setLongitude(request.longitude());
   }

@@ -67,10 +67,14 @@ public class NotificationServiceImpl implements NotificationService {
                         "NOTIFICATION_NOT_FOUND",
                         "NotificationEntity not found",
                         HttpStatus.NOT_FOUND));
-    if (notification.getStatus() == NotificationStatus.PENDING) {
-      notification.setStatus(NotificationStatus.SENT);
-    }
+    notification.setReadAt(Instant.now());
     return NotificationResponseBuilder.build(notification);
+  }
+
+  @Override
+  @Transactional
+  public void readAll(UUID userId) {
+    notificationRepository.markAllRead(userId, Instant.now());
   }
 
   @Override

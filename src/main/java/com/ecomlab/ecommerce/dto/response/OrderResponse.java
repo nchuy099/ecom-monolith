@@ -1,6 +1,7 @@
 package com.ecomlab.ecommerce.dto.response;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -20,5 +21,9 @@ public class OrderResponse {
   private String status;
   private BigDecimal totalAmount;
   private String city;
+  private String recipientName;
+  private String phone;
+  private String addressLine;
   private List<OrderItemResponse> items;
+  private Instant createdAt;
 }

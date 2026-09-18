@@ -12,6 +12,8 @@ public final class CategoryResponseBuilder {
         .parentId(category.getParent() == null ? null : category.getParent().getId())
         .name(category.getName())
         .description(category.getDescription())
+        .slug(category.getSlug())
+        .icon(category.getIcon())
         .build();
   }
 }

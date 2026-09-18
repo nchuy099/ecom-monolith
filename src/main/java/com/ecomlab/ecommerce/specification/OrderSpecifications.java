@@ -8,6 +8,10 @@ import org.springframework.data.jpa.domain.Specification;
 public final class OrderSpecifications {
   private OrderSpecifications() {}
 
+  public static Specification<OrderEntity> visible() {
+    return (root, query, criteriaBuilder) -> criteriaBuilder.isFalse(root.get("isDeleted"));
+  }
+
   public static Specification<OrderEntity> visibleToUser(UUID userId) {
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.and(

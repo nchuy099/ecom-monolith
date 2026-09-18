@@ -14,4 +14,5 @@ public class CartResponse {
   private UUID id;
   private List<CartItemResponse> items;
   private BigDecimal totalAmount;
+  private int itemCount;
 }

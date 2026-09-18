@@ -13,6 +13,7 @@ import com.ecomlab.ecommerce.repository.ShipmentRepository;
 import com.ecomlab.ecommerce.service.OrderService;
 import com.ecomlab.ecommerce.service.builder.OrderResponseBuilder;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,10 +29,31 @@ public class OrderServiceImpl implements OrderService {
   @Transactional(readOnly = true)
   public CursorPageResponse<OrderResponse> getMyOrders(
       UUID userId, OrderStatus status, String cursor, int size) {
-    int pageSize = Math.max(1, Math.min(size, 100));
-    OrderListCursor position = parseCursor(cursor, status);
-    List<OrderEntity> rows =
-        orderRepository.findMyOrdersAfterCursor(userId, status, position, pageSize + 1);
+    return cursorPage(
+        orderRepository.findMyOrdersAfterCursor(
+            userId, status, parseCursor(cursor, status), pageSize(size) + 1),
+        status,
+        pageSize(size));
+  }
+
+  @Transactional(readOnly = true)
+  public CursorPageResponse<OrderResponse> getOrders(OrderStatus status, String cursor, int size) {
+    return cursorPage(
+        orderRepository.findOrdersAfterCursor(
+            status, parseCursor(cursor, status), pageSize(size) + 1),
+        status,
+        pageSize(size));
+  }
+
+  @Transactional(readOnly = true)
+  public Map<String, Object> summary() {
+    return Map.of(
+        "totalOrders", orderRepository.countByIsDeletedFalse(),
+        "totalRevenue", orderRepository.totalRevenue());
+  }
+
+  private CursorPageResponse<OrderResponse> cursorPage(
+      List<OrderEntity> rows, OrderStatus status, int pageSize) {
     boolean hasNext = rows.size() > pageSize;
     List<OrderEntity> content = hasNext ? rows.subList(0, pageSize) : rows;
     String nextCursor =
@@ -43,6 +65,10 @@ public class OrderServiceImpl implements OrderService {
         .hasNext(hasNext)
         .nextCursor(nextCursor)
         .build();
+  }
+
+  private int pageSize(int size) {
+    return Math.max(1, Math.min(size, 100));
   }
 
   @Transactional(readOnly = true)

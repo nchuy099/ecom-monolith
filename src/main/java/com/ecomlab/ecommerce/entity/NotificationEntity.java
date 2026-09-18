@@ -51,6 +51,9 @@ public class NotificationEntity extends BaseEntity {
   @Column(name = "claimed_at")
   private Instant claimedAt;
 
+  @Column(name = "read_at")
+  private Instant readAt;
+
   @Column(name = "last_error", length = 1000)
   private String lastError;
 }

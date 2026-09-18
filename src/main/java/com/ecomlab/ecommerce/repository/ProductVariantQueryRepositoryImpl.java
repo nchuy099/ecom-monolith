@@ -11,6 +11,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
@@ -34,6 +35,8 @@ public class ProductVariantQueryRepositoryImpl implements ProductVariantQueryRep
       UUID categoryId,
       BigDecimal minPrice,
       BigDecimal maxPrice,
+      boolean inStockOnly,
+      String sort,
       ProductListCursor cursor,
       int limit) {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -41,6 +44,7 @@ public class ProductVariantQueryRepositoryImpl implements ProductVariantQueryRep
         criteriaBuilder.createQuery(ProductListProjection.class);
     Root<ProductVariantEntity> variantRoot = query.from(ProductVariantEntity.class);
     Join<ProductVariantEntity, ProductEntity> productJoin = variantRoot.join("product");
+    var categoryJoin = productJoin.join("category", JoinType.LEFT);
 
     Expression<Long> availableQuantity =
         stockQuantity(query, criteriaBuilder, variantRoot, "availableQuantity");
@@ -52,7 +56,8 @@ public class ProductVariantQueryRepositoryImpl implements ProductVariantQueryRep
             ProductVariantSpecifications.keywordContains(keyword),
             ProductVariantSpecifications.hasCategory(categoryId),
             ProductVariantSpecifications.hasMinPrice(minPrice),
-            ProductVariantSpecifications.hasMaxPrice(maxPrice));
+            ProductVariantSpecifications.hasMaxPrice(maxPrice),
+            ProductVariantSpecifications.inStockOnly(inStockOnly));
     Predicate filterPredicate = specification.toPredicate(variantRoot, query, criteriaBuilder);
     Predicate cursorPredicate = afterCursor(variantRoot, criteriaBuilder, cursor);
 
@@ -62,13 +67,18 @@ public class ProductVariantQueryRepositoryImpl implements ProductVariantQueryRep
             productJoin.get("id"),
             productJoin.get("name"),
             productJoin.get("category").get("id"),
+            categoryJoin.get("name"),
             productJoin.get("active"),
             variantRoot.get("id"),
             variantRoot.get("sku"),
             variantRoot.get("name"),
             variantRoot.get("price"),
             availableQuantity,
-            reservedQuantity));
+            reservedQuantity,
+            variantRoot.get("imageUrl"),
+            productJoin.get("rating"),
+            productJoin.get("reviewCount"),
+            productJoin.get("badge")));
     query.where(criteriaBuilder.and(filterPredicate, cursorPredicate));
     query.orderBy(
         criteriaBuilder.asc(variantRoot.get("price")), criteriaBuilder.asc(variantRoot.get("id")));

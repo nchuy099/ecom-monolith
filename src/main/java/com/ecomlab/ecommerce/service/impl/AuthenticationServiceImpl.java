@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.*;
 import java.util.*;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,15 +19,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
   private final UserRepository userRepository;
   private final RefreshTokenRepository refreshTokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final AccessTokenService accessTokenService;
-
-  @Value("${ecom.accessTokenService.refresh-token-ttl}")
   private final Duration refreshTtl;
+
+  public AuthenticationServiceImpl(
+      UserRepository userRepository,
+      RefreshTokenRepository refreshTokenRepository,
+      PasswordEncoder passwordEncoder,
+      AccessTokenService accessTokenService,
+      @Value("${ecom.jwt.refresh-token-ttl}") Duration refreshTtl) {
+    this.userRepository = userRepository;
+    this.refreshTokenRepository = refreshTokenRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.accessTokenService = accessTokenService;
+    this.refreshTtl = refreshTtl;
+  }
 
   @Transactional
   public TokenPairResponse register(
