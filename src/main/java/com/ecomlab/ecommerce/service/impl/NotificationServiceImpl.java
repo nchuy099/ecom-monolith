@@ -147,7 +147,7 @@ public class NotificationServiceImpl implements NotificationService {
     Instant now = Instant.now();
     notificationRepository.requeueExpiredClaims(now.minus(claimTimeout));
     return notificationRepository
-        .lockDueNotifications(NotificationStatus.PENDING, now, PageRequest.of(0, batchSize))
+        .lockDueNotifications(NotificationStatus.PENDING.name(), now, batchSize)
         .stream()
         .map(notification -> claim(notification, now))
         .toList();

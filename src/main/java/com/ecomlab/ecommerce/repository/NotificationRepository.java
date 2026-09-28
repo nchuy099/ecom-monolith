@@ -2,13 +2,11 @@ package com.ecomlab.ecommerce.repository;
 
 import com.ecomlab.ecommerce.common.enums.NotificationStatus;
 import com.ecomlab.ecommerce.entity.*;
-import jakarta.persistence.LockModeType;
 import java.time.Instant;
 import java.util.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,7 +25,7 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
 
   @Modifying
   @Query(
-      """
+      value = """
       update NotificationEntity n
       set n.readAt = :readAt
       where n.user.id = :userId
@@ -36,18 +34,22 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
       """)
   int markAllRead(@Param("userId") UUID userId, @Param("readAt") Instant readAt);
 
-  @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query(
-      """
-      select n
-      from NotificationEntity n
+      value = """
+      select n.*
+      from notifications n
       where n.status = :status
-        and n.nextAttemptAt <= :now
-        and n.isDeleted = false
-      order by n.nextAttemptAt asc, n.createdAt asc
-      """)
+        and n.next_attempt_at <= :now
+        and n.is_deleted = false
+      order by n.next_attempt_at asc, n.created_at asc
+      limit :batchSize
+      for update skip locked
+      """,
+      nativeQuery = true)
   List<NotificationEntity> lockDueNotifications(
-      @Param("status") NotificationStatus status, @Param("now") Instant now, Pageable pageable);
+      @Param("status") String status,
+      @Param("now") Instant now,
+      @Param("batchSize") int batchSize);
 
   @Modifying
   @Query(
