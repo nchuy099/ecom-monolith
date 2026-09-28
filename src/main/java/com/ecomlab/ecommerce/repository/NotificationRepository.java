@@ -41,8 +41,6 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
       """
       select n
       from NotificationEntity n
-      left join fetch n.user
-      left join fetch n.order
       where n.status = :status
         and n.nextAttemptAt <= :now
         and n.isDeleted = false
